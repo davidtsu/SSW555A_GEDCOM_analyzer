@@ -27,6 +27,33 @@ class GED_Repo:
         pt.field_names = ['ID', 'Married', 'Divorced', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
         pass
 
+class Individual:
+    """ stores info for a single individual """
+    def __init__(self):
+        """ constructor for Individual """
+        self.id = ''
+        self.name = ''
+        self.gender = ''
+        self.birthday = ''
+        self.age = 0
+        self.alive = True
+        self.death = ''
+        self.child = ''
+        self.spouse = ''
+
+class Family:
+    """ stores info for a family """
+    def __init__(self):
+        """ constructor for family """
+        self.id = ''
+        self.married = ''
+        self.divorced = ''
+        self.husb_id = ''
+        self.husb_name = ''
+        self.wife_id = ''
+        self.wife_name = ''
+        self.children = ''
+
 def read_ged(ip, op, sep=','):
     """ For reading GEDCOM files """
     tags = {
