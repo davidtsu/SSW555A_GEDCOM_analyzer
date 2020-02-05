@@ -16,7 +16,7 @@ class GED_Repo:
 
         try:
             # this will analyze all files in the input_files directory
-            for file in os.listdir(os.path.join(self.directory, 'input_files')):
+            for file in [f for f in os.listdir(os.path.join(self.directory, 'input_files')) if f.endswith('.ged')]:
                 self.read_ged(os.path.join(self.directory, 'input_files', file))
         except FileNotFoundError as f:
             raise f
