@@ -60,15 +60,11 @@ class GED_Repo:
                     level = my_tuple[0]
                     tag = my_tuple[1]
                     arg = '' if len(my_tuple) == 2 else my_tuple[2]
-                    out_line = tuple()
 
                     # level and tag checking
                     if level in tags.keys():
                         # if tag in dict
                         if tag in tags[level]['VALID']:
-                            # add line value to corresponding family or individual dict. maybe use boolean flags?
-                            out_line = (level, tag, 'Y', arg)
-
                             # check all individual tags here
                             if i_flag:
                                 if tag == 'NAME':
@@ -81,12 +77,15 @@ class GED_Repo:
                                     ind.set_spouse(arg)
                                 elif tag == 'BIRT':
                                     # TODO: get date from next line
-                                    # ind.set_birthday(arg)
+                                    # ind.set_birthday(NEED DATE HERE)
                                     pass
                                 elif tag == 'DEAT':
                                     # TODO: get date from next line
                                     ind.set_alive(False)
-                                    # ind.set_death(arg)
+                                    # ind.set_death(NEED DATE HERE)
+                                    pass
+                                else: #tag == 'DATE'
+                                    # TODO: match date data to appropriate tag
                                     pass
 
                             # check all family tags here
@@ -101,17 +100,17 @@ class GED_Repo:
                                     fam.set_children(arg)
                                 elif tag == 'MARR':
                                     # TODO: need to get date from next line
-                                    # fam.set_married(DATE HERE)
+                                    # fam.set_married(NEED DATE HERE)
                                     pass
                                 elif tag == 'DIV':
                                     # TODO: need to get date from next line
-                                    # fam.set_divorced(DATE HERE)
+                                    # fam.set_divorced(NEED DATE HERE)
                                     pass
-                                else:
-                                    print(f'tag={tag}')
-                                    # raise ValueError('How did we end up here?')
+                                else: # tag == DATE and tag == TRLR
+                                    # TODO: match date data to appropriate tag
+                                    pass
 
-                        elif arg in tags[level]['SWAP']:
+                        if arg in tags[level]['SWAP']:
                             # new individual/family starts here
                             # if old individual/family exists, save it to dictionary
                             if ind.iid != '':
@@ -128,19 +127,6 @@ class GED_Repo:
                             elif arg == 'FAM':
                                 fam.set_fid(tag)
                                 f_flag = True
-
-                            out_line = (level, arg, 'Y', tag)
-                                
-                        # tag or arg not in dict
-                        else:
-                            out_line = (level, tag, 'N', arg)
-                    # invalid level
-                    else:
-                        out_line = (level, tag, 'N', arg)
-
-                    # print for clarity
-                    #print('--> ' + line + '\n')
-                    #print('<-- ' + '|'.join(out_line) + '\n')
 
                 # need to check once here for final individual/family item
                 if ind.iid != '':
