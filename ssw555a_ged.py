@@ -3,7 +3,8 @@ ssw555a_ged.py
 @Author: David Tsu, Ejona Kocibelli, Akshay Lavhagale, Zephyr Zambrano, Xiaojun Zhu
 file reader for GEDCOM files
 """
-import os
+import os, math
+from datetime import datetime
 from prettytable import PrettyTable
 
 class GED_Repo:
@@ -16,8 +17,8 @@ class GED_Repo:
 
         try:
             # this will analyze all files in the input_files directory
-            for file in [f for f in os.listdir(os.path.join(self.directory, 'input_files')) if f.endswith('.ged')]:
-                self.read_ged(os.path.join(self.directory, 'input_files', file))
+            for file in [f for f in os.listdir(os.path.join(self.directory, 'test_input_files')) if f.endswith('.ged')]:
+                self.read_ged(os.path.join(self.directory, 'test_input_files', file))
         except FileNotFoundError as f:
             raise f
         except ValueError as v:
@@ -32,7 +33,7 @@ class GED_Repo:
             },
             '1': {
                 'VALID': {'NAME', 'SEX', 'FAMC', 'FAMS', 'HUSB', 'WIFE', 'CHIL', 'BIRT', 'DEAT', 'MARR', 'DIV'},
-                'SWAP': set()   # not sure I need to make this, but in case of future extension I'll leave it.
+                'SWAP': set()
             },
             '2': {
                 'VALID': {'DATE'},
@@ -76,17 +77,35 @@ class GED_Repo:
                                 elif tag == 'FAMS':
                                     ind.set_spouse(arg)
                                 elif tag == 'BIRT':
-                                    # TODO: get date from next line
-                                    # ind.set_birthday(NEED DATE HERE)
-                                    pass
+                                    # must read & parse next line for DOB
+                                    line = next(fp_in)
+                                    my_tuple = tuple(line.strip().split(sep, 2))
+                                    level = my_tuple[0]
+                                    tag = my_tuple[1]
+                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                    if tag != 'DATE':
+                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                    else:
+                                        d = self.strip_date(arg)
+                                        ind.set_birthday(d)
+                                        ind.set_alive(True)
+                                        ind.set_age()
                                 elif tag == 'DEAT':
-                                    # TODO: get date from next line
-                                    ind.set_alive(False)
-                                    # ind.set_death(NEED DATE HERE)
-                                    pass
+                                    # must read & parse next line for DOD
+                                    line = next(fp_in)
+                                    my_tuple = tuple(line.strip().split(sep, 2))
+                                    level = my_tuple[0]
+                                    tag = my_tuple[1]
+                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                    if tag != 'DATE':
+                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                    else:
+                                        d = self.strip_date(arg)
+                                        ind.set_alive(False)
+                                        ind.set_death(d)
+                                        ind.set_age()
                                 else: #tag == 'DATE'
-                                    # TODO: match date data to appropriate tag
-                                    pass
+                                    raise ValueError(f'Unmatched DATE tag, please review {ip}.')
 
                             # check all family tags here
                             if f_flag:
@@ -99,16 +118,32 @@ class GED_Repo:
                                 elif tag == 'CHIL':
                                     fam.set_children(arg)
                                 elif tag == 'MARR':
-                                    # TODO: need to get date from next line
-                                    # fam.set_married(NEED DATE HERE)
-                                    pass
+                                    # 
+                                    line = next(fp_in)
+                                    my_tuple = tuple(line.strip().split(sep, 2))
+                                    level = my_tuple[0]
+                                    tag = my_tuple[1]
+                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                    if tag != 'DATE':
+                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                    else:
+                                        d = self.strip_date(arg)
+                                        fam.set_married(d)
                                 elif tag == 'DIV':
-                                    # TODO: need to get date from next line
-                                    # fam.set_divorced(NEED DATE HERE)
+                                    line = next(fp_in)
+                                    my_tuple = tuple(line.strip().split(sep, 2))
+                                    level = my_tuple[0]
+                                    tag = my_tuple[1]
+                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                    if tag != 'DATE':
+                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                    else:
+                                        d = self.strip_date(arg)
+                                        fam.set_divorced(d)
                                     pass
-                                else: # tag == DATE and tag == TRLR
-                                    # TODO: match date data to appropriate tag
-                                    pass
+                                else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
+                                    if tag == 'DATE':
+                                        raise ValueError(f'Unmatched DATE tag, please review {ip}.')
 
                         if arg in tags[level]['SWAP']:
                             # new individual/family starts here
@@ -124,7 +159,7 @@ class GED_Repo:
                             if arg == 'INDI':
                                 ind.set_iid(tag)
                                 i_flag = True
-                            elif arg == 'FAM':
+                            if arg == 'FAM':
                                 fam.set_fid(tag)
                                 f_flag = True
 
@@ -151,6 +186,11 @@ class GED_Repo:
         """ must pass in family """
         self.families[f.fid] = f
         return Family()
+
+    def strip_date(self, arg):
+        """ return datetime object """
+        dt = datetime.strptime(arg, "%d %b %Y")
+        return dt.strftime("%Y-%m-%d")
 
     def print_individuals(self):
         """ prints list of individuals using prettytable """
@@ -202,9 +242,19 @@ class Individual:
         """ sets new individual birthday """
         self.birthday = b
 
-    def set_age(self, a):
+    def set_age(self):
         """ sets new individual birthday """
-        self.age = a
+        if self.alive and self.death == 'NA':
+            bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+            cd = datetime.today()
+            self.age = math.floor((cd - bd).days / 365.2425)
+        else:
+            if self.death == 'NA':
+                raise f'{self.name} is either marked alive but has death or marked dead but has no death date.'
+            else:
+                bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+                dd = datetime.strptime(self.death, "%Y-%m-%d")
+                self.age = math.floor((dd - bd).days / 365.2425)
 
     def set_alive(self, a):
         """ sets new individual living status """
@@ -212,7 +262,7 @@ class Individual:
 
     def set_death(self, d):
         """ sets new individual death date """
-        self.death = d
+        self.death = d if d else 'NA'
 
     def set_child(self, c):
         """ adds child to individual's children """
@@ -230,7 +280,7 @@ class Individual:
 
 class Family:
     """ stores info for a family """
-    def __init__(self, fid = '', married = '', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = ''):
+    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA'):
         """ constructor for family """
         self.fid = fid
         self.married = married
@@ -251,11 +301,11 @@ class Family:
 
     def set_married(self, m):
         """ sets new family marriage date """
-        self.married = m
+        self.married = m if m else 'NA'
 
     def set_divorced(self, d):
         """ sets new family divorce date """
-        self.divorced = d
+        self.divorced = d if d else 'NA'
 
     def set_husb_id(self, h):
         """ sets new family husb_id """
@@ -291,7 +341,6 @@ def non_blank_lines(f):
 
 def main():
     """ for running GED reader. """
-    # fetch user input
     g = GED_Repo(os.getcwd())
     g.print_individuals()
     g.print_families()
