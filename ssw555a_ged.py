@@ -188,9 +188,27 @@ class GED_Repo:
         return Family()
 
     def strip_date(self, arg):
-        """ return datetime object """
+        """ return datetime object
+        
+        currently throws an error if it receives an illegitimate date,
+        otherwise set_age will throw an error
+        
+        should this method...
+        - throw error if illegitimate date?
+        - return None and make date N/A?* (must change set_age)
+        
+        old:
         dt = datetime.strptime(arg, "%d %b %Y")
         return dt.strftime("%Y-%m-%d")
+
+        """
+        try:
+            dt = datetime.strptime(arg, "%d %b %Y")
+        except ValueError as v:
+            raise ValueError("illegitimate date received")
+        else:
+            dt = datetime.strptime(arg, "%d %b %Y")
+            return dt.strftime("%Y-%m-%d")
 
     def print_individuals(self):
         """ prints list of individuals using prettytable """
