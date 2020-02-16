@@ -189,22 +189,10 @@ class GED_Repo:
 
     def strip_date(self, arg):
         """ return datetime object
-        
-        currently throws an error if it receives an illegitimate date,
-        otherwise set_age will throw an error
-        
-        should this method...
-        - throw error if illegitimate date?
-        - return None and make date N/A?* (must change set_age)
-        
-        old:
-        dt = datetime.strptime(arg, "%d %b %Y")
-        return dt.strftime("%Y-%m-%d")
-
-        """
+        throws error if illegitimate date is received """
         try:
             dt = datetime.strptime(arg, "%d %b %Y")
-        except ValueError as v:
+        except ValueError:
             raise ValueError("illegitimate date received")
         else:
             dt = datetime.strptime(arg, "%d %b %Y")
@@ -261,18 +249,34 @@ class Individual:
         self.birthday = b
 
     def set_age(self):
-        """ sets new individual birthday """
+        """ sets new individual birthday 
+        throws error if illegitimate date is received """
         if self.alive and self.death == 'NA':
-            bd = datetime.strptime(self.birthday, "%Y-%m-%d")
-            cd = datetime.today()
-            self.age = math.floor((cd - bd).days / 365.2425)
+            try:
+                bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+            except ValueError:
+                raise ValueError("illegitimate date received")
+            else:
+                bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+                cd = datetime.today()
+                self.age = math.floor((cd - bd).days / 365.2425)
         else:
             if self.death == 'NA':
                 raise f'{self.name} is either marked alive but has death or marked dead but has no death date.'
             else:
-                bd = datetime.strptime(self.birthday, "%Y-%m-%d")
-                dd = datetime.strptime(self.death, "%Y-%m-%d")
-                self.age = math.floor((dd - bd).days / 365.2425)
+                try:
+                    bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+                except ValueError:
+                    raise ValueError("illegitimate date received")
+                try:
+                    dd = datetime.strptime(self.death, "%Y-%m-%d")
+                except ValueError:
+                    raise ValueError("illegitimate date received")
+                else:
+                    bd = datetime.strptime(self.birthday, "%Y-%m-%d")
+                    dd = datetime.strptime(self.death, "%Y-%m-%d")
+                    self.age = math.floor((dd - bd).days / 365.2425)
+                    
 
     def set_alive(self, a):
         """ sets new individual living status """
