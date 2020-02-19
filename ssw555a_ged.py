@@ -369,9 +369,9 @@ def main():
             g.print_individuals()
             g.print_families()
         except ValueError as v:
-            raise v
+            print(v)
         except FileNotFoundError as f:
-            raise f
+            print(f)
     else:
         print('No files found in test_input_files, or test_input_files not found.')
 
