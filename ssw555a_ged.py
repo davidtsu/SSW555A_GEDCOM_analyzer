@@ -63,7 +63,7 @@ class GED_Repo:
 
                         # non_blank_lines generator removes blank lines, might not need generator with this check in place.
                         if len(my_tuple) < 2:
-                            raise ValueError(f'Line in {ip} has too few values. Please fix and try again. GEDCOME line: {line_number}')
+                            raise ValueError(f'Line in {ip} has too few values. Please fix and try again. GEDCOM line: {line_number}')
 
                         # renaming for sanity
                         level = my_tuple[0]
@@ -93,7 +93,7 @@ class GED_Repo:
                                         tag = my_tuple[1]
                                         arg = '' if len(my_tuple) == 2 else my_tuple[2]
                                         if tag != 'DATE':
-                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOME line: {line_number}')
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_birthday(d)
@@ -108,14 +108,14 @@ class GED_Repo:
                                         tag = my_tuple[1]
                                         arg = '' if len(my_tuple) == 2 else my_tuple[2]
                                         if tag != 'DATE':
-                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOME line: {line_number}')
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_alive(False)
                                             ind.set_death(d)
                                             ind.set_age(line_number)
                                     else: #tag == 'DATE'
-                                        raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOME line: {line_number}')
+                                        raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
 
                                 # check all family tags here
                                 if f_flag:
@@ -136,7 +136,7 @@ class GED_Repo:
                                         tag = my_tuple[1]
                                         arg = '' if len(my_tuple) == 2 else my_tuple[2]
                                         if tag != 'DATE':
-                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOME line: {line_number}')
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             fam.set_married(d)
@@ -148,14 +148,14 @@ class GED_Repo:
                                         tag = my_tuple[1]
                                         arg = '' if len(my_tuple) == 2 else my_tuple[2]
                                         if tag != 'DATE':
-                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOME line: {line_number}')
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             fam.set_divorced(d)
                                         pass
                                     else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
                                         if tag == 'DATE':
-                                            raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOME line: {line_number}')
+                                            raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
 
                             if arg in tags[level]['SWAP']:
                                 # new individual/family starts here
@@ -188,9 +188,9 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise ValueError(f'Bad value. Please check {ip} for bad data: {v}. GEDCOME line: {line_number}')
+            raise ValueError(f'Bad value. Please check {ip} for bad data: {v}. GEDCOM line: {line_number}')
         except FileNotFoundError:
-            raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOME line: {line_number}')
+            raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
 
     def add_individual(self, i):
         """ must pass in individual """
@@ -209,7 +209,7 @@ class GED_Repo:
         try:
             dt = datetime.strptime(arg, "%d %b %Y")
         except ValueError:
-            raise ValueError(f"illegitimate date received. GEDCOME line: {line_number}")
+            raise ValueError(f"illegitimate date received. GEDCOM line: {line_number}")
         else:
             dt = datetime.strptime(arg, "%d %b %Y")
             return dt.strftime("%Y-%m-%d")
@@ -272,23 +272,23 @@ class Individual:
             try:
                 bd = datetime.strptime(self.birthday, "%Y-%m-%d")
             except ValueError:
-                raise ValueError("illegitimate date received. GEDCOME line: {line_number}")
+                raise ValueError("illegitimate date received. GEDCOM line: {line_number}")
             else:
                 bd = datetime.strptime(self.birthday, "%Y-%m-%d")
                 cd = datetime.today()
                 self.age = math.floor((cd - bd).days / 365.2425)
         else:
             if self.death == 'NA':
-                raise f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOME line: {line_number}'
+                raise f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOM line: {line_number}'
             else:
                 try:
                     bd = datetime.strptime(self.birthday, "%Y-%m-%d")
                 except ValueError:
-                    raise ValueError("illegitimate date received. GEDCOME line: {line_number}")
+                    raise ValueError("illegitimate date received. GEDCOM line: {line_number}")
                 try:
                     dd = datetime.strptime(self.death, "%Y-%m-%d")
                 except ValueError:
-                    raise ValueError("illegitimate date received. GEDCOME line: {line_number}")
+                    raise ValueError("illegitimate date received. GEDCOM line: {line_number}")
                 else:
                     bd = datetime.strptime(self.birthday, "%Y-%m-%d")
                     dd = datetime.strptime(self.death, "%Y-%m-%d")
