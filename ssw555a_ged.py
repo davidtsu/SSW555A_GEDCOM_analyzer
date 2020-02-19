@@ -9,16 +9,18 @@ from prettytable import PrettyTable
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
-    def __init__(self, directory):
+    def __init__(self, in_file):
         """ constructor for GED_Repo, creates list of individuals and families """
-        self.directory = directory
+        self.in_file = in_file
         self.individuals = dict()
         self.families = dict()
 
         try:
             # this will analyze all files in the input_files directory
-            for file in [f for f in os.listdir(os.path.join(self.directory, 'test_input_files')) if f.endswith('.ged')]:
-                self.read_ged(os.path.join(self.directory, 'test_input_files', file))
+            if in_file.endswith('.ged'):
+                self.read_ged(self.in_file)
+            else:
+                print('Bad input file.')
         except FileNotFoundError as f:
             raise f
         except ValueError as v:
@@ -369,9 +371,20 @@ class Family:
 
 def main():
     """ for running GED reader. """
-    g = GED_Repo(os.getcwd())
-    g.print_individuals()
-    g.print_families()
+
+    # this will analyze all files in the input_files directory
+    for file in [f for f in os.listdir(os.path.join(os.getcwd(), 'test_input_files')) if f.endswith('.ged')]:
+        try:
+            print(f'Creating GED_Repo for data in {file}')
+            g = GED_Repo(os.path.join(os.getcwd(), 'test_input_files', file))
+            g.print_individuals()
+            g.print_families()
+        except ValueError as v:
+            print(v)
+        except FileNotFoundError as f:
+            print(f)
+    else:
+        print('No files found in test_input_files, or test_input_files not found.')
 
 if __name__ == '__main__':
     main()
