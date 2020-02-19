@@ -17,7 +17,7 @@ class Test_Line_Numbers(unittest.TestCase):
         """ Tests that strip_date displays the correct error message with the expected line number. """
         with self.assertRaises(ValueError) as e:
             GED_Repo.strip_date(self,"40 JAN 1990", line_number=0).fail()
-        self.assertEqual("illegitimate date received. GEDCOME line: 0", str(e.exception))
+        self.assertEqual("illegitimate date received. GEDCOM line: 0", str(e.exception))
 
 
 if __name__ == "__main__":
