@@ -49,119 +49,123 @@ class GED_Repo:
                 fam = Family()
                 f_flag = False
 
-                for line in non_blank_lines(fp_in):
-                    # split each line at spaces
-                    my_tuple = tuple(line.strip().split(sep, 2))
+                for line in fp_in:
+                    line = line.rstrip()
+                    
+                    if line:
 
-                    # non_blank_lines generator removes blank lines, might not need generator with this check in place.
-                    if len(my_tuple) < 2:
-                        raise ValueError(f'Line in {ip} has too few values. Please fix and try again.')
+                        # split each line at spaces
+                        my_tuple = tuple(line.strip().split(sep, 2))
 
-                    # renaming for sanity
-                    level = my_tuple[0]
-                    tag = my_tuple[1]
-                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                        # non_blank_lines generator removes blank lines, might not need generator with this check in place.
+                        if len(my_tuple) < 2:
+                            raise ValueError(f'Line in {ip} has too few values. Please fix and try again.')
 
-                    # level and tag checking
-                    if level in tags.keys():
-                        # if tag in dict
-                        if tag in tags[level]['VALID']:
-                            # check all individual tags here
-                            if i_flag:
-                                if tag == 'NAME':
-                                    ind.set_name(arg)
-                                elif tag == 'SEX':
-                                    ind.set_gender(arg)
-                                elif tag == 'FAMC':
-                                    ind.set_child(arg)
-                                elif tag == 'FAMS':
-                                    ind.set_spouse(arg)
-                                elif tag == 'BIRT':
-                                    # must read & parse next line for DOB
-                                    line = next(fp_in)
-                                    my_tuple = tuple(line.strip().split(sep, 2))
-                                    level = my_tuple[0]
-                                    tag = my_tuple[1]
-                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
-                                    if tag != 'DATE':
-                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
-                                    else:
-                                        d = self.strip_date(arg)
-                                        ind.set_birthday(d)
-                                        ind.set_alive(True)
-                                        ind.set_age()
-                                elif tag == 'DEAT':
-                                    # must read & parse next line for DOD
-                                    line = next(fp_in)
-                                    my_tuple = tuple(line.strip().split(sep, 2))
-                                    level = my_tuple[0]
-                                    tag = my_tuple[1]
-                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
-                                    if tag != 'DATE':
-                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
-                                    else:
-                                        d = self.strip_date(arg)
-                                        ind.set_alive(False)
-                                        ind.set_death(d)
-                                        ind.set_age()
-                                else: #tag == 'DATE'
-                                    raise ValueError(f'Unmatched DATE tag, please review {ip}.')
+                        # renaming for sanity
+                        level = my_tuple[0]
+                        tag = my_tuple[1]
+                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
 
-                            # check all family tags here
-                            if f_flag:
-                                if tag == 'HUSB':
-                                    fam.set_husb_id(arg)
-                                    fam.set_husb_name(self.individuals[arg].name)
-                                elif tag == 'WIFE':
-                                    fam.set_wife_id(arg)
-                                    fam.set_wife_name(self.individuals[arg].name)
-                                elif tag == 'CHIL':
-                                    fam.set_children(arg)
-                                elif tag == 'MARR':
-                                    # 
-                                    line = next(fp_in)
-                                    my_tuple = tuple(line.strip().split(sep, 2))
-                                    level = my_tuple[0]
-                                    tag = my_tuple[1]
-                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
-                                    if tag != 'DATE':
-                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
-                                    else:
-                                        d = self.strip_date(arg)
-                                        fam.set_married(d)
-                                elif tag == 'DIV':
-                                    line = next(fp_in)
-                                    my_tuple = tuple(line.strip().split(sep, 2))
-                                    level = my_tuple[0]
-                                    tag = my_tuple[1]
-                                    arg = '' if len(my_tuple) == 2 else my_tuple[2]
-                                    if tag != 'DATE':
-                                        raise ValueError(f'Bad value, {tag} is not DATE tag')
-                                    else:
-                                        d = self.strip_date(arg)
-                                        fam.set_divorced(d)
-                                    pass
-                                else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
-                                    if tag == 'DATE':
+                        # level and tag checking
+                        if level in tags.keys():
+                            # if tag in dict
+                            if tag in tags[level]['VALID']:
+                                # check all individual tags here
+                                if i_flag:
+                                    if tag == 'NAME':
+                                        ind.set_name(arg)
+                                    elif tag == 'SEX':
+                                        ind.set_gender(arg)
+                                    elif tag == 'FAMC':
+                                        ind.set_child(arg)
+                                    elif tag == 'FAMS':
+                                        ind.set_spouse(arg)
+                                    elif tag == 'BIRT':
+                                        # must read & parse next line for DOB
+                                        line = next(fp_in)
+                                        my_tuple = tuple(line.strip().split(sep, 2))
+                                        level = my_tuple[0]
+                                        tag = my_tuple[1]
+                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                        if tag != 'DATE':
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                        else:
+                                            d = self.strip_date(arg)
+                                            ind.set_birthday(d)
+                                            ind.set_alive(True)
+                                            ind.set_age()
+                                    elif tag == 'DEAT':
+                                        # must read & parse next line for DOD
+                                        line = next(fp_in)
+                                        my_tuple = tuple(line.strip().split(sep, 2))
+                                        level = my_tuple[0]
+                                        tag = my_tuple[1]
+                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                        if tag != 'DATE':
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                        else:
+                                            d = self.strip_date(arg)
+                                            ind.set_alive(False)
+                                            ind.set_death(d)
+                                            ind.set_age()
+                                    else: #tag == 'DATE'
                                         raise ValueError(f'Unmatched DATE tag, please review {ip}.')
 
-                        if arg in tags[level]['SWAP']:
-                            # new individual/family starts here
-                            # if old individual/family exists, save it to dictionary
-                            if ind.iid != '':
-                                ind = self.add_individual(ind)
-                                i_flag = f_flag = False
-                            if fam.fid != '':
-                                fam = self.add_family(fam)
-                                i_flag = f_flag = False
+                                # check all family tags here
+                                if f_flag:
+                                    if tag == 'HUSB':
+                                        fam.set_husb_id(arg)
+                                        fam.set_husb_name(self.individuals[arg].name)
+                                    elif tag == 'WIFE':
+                                        fam.set_wife_id(arg)
+                                        fam.set_wife_name(self.individuals[arg].name)
+                                    elif tag == 'CHIL':
+                                        fam.set_children(arg)
+                                    elif tag == 'MARR':
+                                        # 
+                                        line = next(fp_in)
+                                        my_tuple = tuple(line.strip().split(sep, 2))
+                                        level = my_tuple[0]
+                                        tag = my_tuple[1]
+                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                        if tag != 'DATE':
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                        else:
+                                            d = self.strip_date(arg)
+                                            fam.set_married(d)
+                                    elif tag == 'DIV':
+                                        line = next(fp_in)
+                                        my_tuple = tuple(line.strip().split(sep, 2))
+                                        level = my_tuple[0]
+                                        tag = my_tuple[1]
+                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                                        if tag != 'DATE':
+                                            raise ValueError(f'Bad value, {tag} is not DATE tag')
+                                        else:
+                                            d = self.strip_date(arg)
+                                            fam.set_divorced(d)
+                                        pass
+                                    else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
+                                        if tag == 'DATE':
+                                            raise ValueError(f'Unmatched DATE tag, please review {ip}.')
 
-                            # starting new ind/fam
-                            if arg == 'INDI':
-                                ind.set_iid(tag)
-                                i_flag = True
-                            if arg == 'FAM':
-                                fam.set_fid(tag)
-                                f_flag = True
+                            if arg in tags[level]['SWAP']:
+                                # new individual/family starts here
+                                # if old individual/family exists, save it to dictionary
+                                if ind.iid != '':
+                                    ind = self.add_individual(ind)
+                                    i_flag = f_flag = False
+                                if fam.fid != '':
+                                    fam = self.add_family(fam)
+                                    i_flag = f_flag = False
+
+                                # starting new ind/fam
+                                if arg == 'INDI':
+                                    ind.set_iid(tag)
+                                    i_flag = True
+                                if arg == 'FAM':
+                                    fam.set_fid(tag)
+                                    f_flag = True
 
                 # need to check once here for final individual/family item
                 if ind.iid != '':
@@ -351,15 +355,6 @@ class Family:
             self.children = self.children | {c}
         else:
             self.children = {c} if (c and c != 'NA') else 'NA'
-
-
-def non_blank_lines(f):
-    """ generator to remove empty lines, found somewhere on Google """
-    # I have to use this because blank lines break my code
-    for line in f:
-        line = line.rstrip()
-        if line:
-            yield line
 
 def main():
     """ for running GED reader. """
