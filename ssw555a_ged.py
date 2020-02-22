@@ -6,6 +6,7 @@ file reader for GEDCOM files
 import os, math
 from datetime import datetime
 from prettytable import PrettyTable
+from datetime import date
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
@@ -91,7 +92,7 @@ class GED_Repo:
                                             raise ValueError(f'Bad value, {tag} is not DATE tag')
                                         else:
                                             d = self.strip_date(arg)
-                                            ind.set_birthday(d)
+                                            ind.set_birthday(us01_check_before_today(d))
                                             ind.set_alive(True)
                                             ind.set_age()
                                     elif tag == 'DEAT':
@@ -106,7 +107,7 @@ class GED_Repo:
                                         else:
                                             d = self.strip_date(arg)
                                             ind.set_alive(False)
-                                            ind.set_death(d)
+                                            ind.set_death(us01_check_before_today(d))
                                             ind.set_age()
                                     else: #tag == 'DATE'
                                         raise ValueError(f'Unmatched DATE tag, please review {ip}.')
@@ -132,7 +133,7 @@ class GED_Repo:
                                             raise ValueError(f'Bad value, {tag} is not DATE tag')
                                         else:
                                             d = self.strip_date(arg)
-                                            fam.set_married(d)
+                                            fam.set_married(us01_check_before_today(d))
                                     elif tag == 'DIV':
                                         line = next(fp_in)
                                         my_tuple = tuple(line.strip().split(sep, 2))
@@ -143,7 +144,7 @@ class GED_Repo:
                                             raise ValueError(f'Bad value, {tag} is not DATE tag')
                                         else:
                                             d = self.strip_date(arg)
-                                            fam.set_divorced(d)
+                                            fam.set_divorced(us01_check_before_today(d))
                                         pass
                                     else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
                                         if tag == 'DATE':
@@ -355,7 +356,20 @@ class Family:
             self.children = self.children | {c}
         else:
             self.children = {c} if (c and c != 'NA') else 'NA'
-
+def us01_check_before_today(p):
+  if isinstance(p,datetime):
+    today=date.today()
+    today_datetime=datetime(today.year, today.month, today.day)
+    date_vs_today=math.floor((p-today_datetime).days)
+    # print((p-today_datetime).days)
+    # print(date_vs_today)
+    if date_vs_today<-1:
+      # print(type(p))
+      return(p.date())
+    else:
+      return("Error:Dates should not be after the current date")
+  else:
+    return("Error:Date is not date.time format")
 def main():
     """ for running GED reader. """
     g = GED_Repo(os.getcwd())
