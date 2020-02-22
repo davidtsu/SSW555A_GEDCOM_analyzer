@@ -7,6 +7,7 @@ import os, math
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
+from datetime import date
 
 
 class GED_Repo:
@@ -536,7 +537,6 @@ class Family:
         else:
             self.children = {c} if (c and c != 'NA') else 'NA'
             self._children_lines = {line_number}
-
 
 def main():
     """ for running GED reader. """
