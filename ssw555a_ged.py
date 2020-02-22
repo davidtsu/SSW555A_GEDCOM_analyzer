@@ -9,7 +9,6 @@ from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 from datetime import date
 
-
 class GED_Repo:
     """ stores data from a GEDCOM file """
     def __init__(self, in_file):
