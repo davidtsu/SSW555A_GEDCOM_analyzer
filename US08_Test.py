@@ -15,9 +15,13 @@ class Test_GED_Repo(unittest.TestCase):
 
         # need following cases:
         # birthday before marriage
+        self.assertRaises(ValueError, GED_Repo, os.path.join(os.getcwd(), 'test_input_files', 'US08_Birth_Before_Marriage.ged'))
+
         # birthday after divorce (within 9mo)
+        # should pass, not sure how to check this
+        
         # birthday after divorce (after 9mo)
-        self.assertRaises(ValueError, GED_Repo(os.path.join(os.getcwd(), 'test_input_files', 'US08_Birth_Before_Marriage.ged')))
+        #self.assertRaises(ValueError, GED_Repo, os.path.join(os.getcwd(), 'test_input_files', 'US08_Birth_After_Divorce'))
 
 if __name__ == "__main__":
     unittest.main(exit=False)
