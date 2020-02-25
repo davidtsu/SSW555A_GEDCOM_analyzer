@@ -13,6 +13,10 @@ class Test_GED_Repo(unittest.TestCase):
     def test_check_bday(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
 
+        # need following cases:
+        # birthday before marriage
+        # birthday after divorce (within 9mo)
+        # birthday after divorce (after 9mo)
         self.assertRaises(ValueError, GED_Repo(os.path.join(os.getcwd(), 'test_input_files', 'US08_Birth_Before_Marriage.ged')))
 
 if __name__ == "__main__":
