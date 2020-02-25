@@ -96,7 +96,7 @@ class GED_Repo:
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
-                                            ind.set_birthday(d)
+                                            ind.set_birthday(d, line_number)
                                             ind.set_alive(True)
                                             ind.set_age(line_number)
                                     elif tag == 'DEAT':
@@ -128,7 +128,6 @@ class GED_Repo:
                                     elif tag == 'CHIL':
                                         fam.set_children(arg)
                                     elif tag == 'MARR':
-                                        # 
                                         line = next(fp_in)
                                         line_number = line_number + 1
                                         my_tuple = tuple(line.strip().split(sep, 2))
@@ -177,7 +176,6 @@ class GED_Repo:
                     
                     line_number = line_number + 1
 
-                # print(line_number)
                 # need to check once here for final individual/family item
                 if ind.iid != '':
                     ind = self.add_individual(ind)
@@ -201,6 +199,36 @@ class GED_Repo:
         """ must pass in family """
         self.families[f.fid] = f
         return Family()
+
+    def check_bday(self, line_number):
+        """ iterates through family dictionary,
+        finds bad birthdays.
+        part of US08
+        """
+        for fam in self.families:
+            if fam.children != 'NA':
+                # fam.children is either a set or 'NA' string
+                for child in fam.children:
+                    bday = self.individuals[child].birthday
+                    marr = fam.married
+                    div = fam.divorced
+
+                    """
+                    if mar == 'NA' or bday > marr:
+                        raise ValueError(f'Individual birthday before marriage on line {line_number}')
+                    if div != 'NA' and bday > div + 9_months:
+                        raise ValueError(f'Individual birthday before marriage on line {line_number}')
+                    """
+
+                    """
+                    dad = self.individuals[fam.husb_id]
+                    mom = self.individuals[fam.wife_id]
+
+                    if !mom.alive and mom.death > child.death:
+                        raise ValueError(f'Individual birthday after mom's death date on line {line_number})
+                    if !dad.alive and dad.death + 9_months > child.death:
+                        raise ValueError(f'Individual birthday after dad's death date on line {line_number})
+                    """
 
     def strip_date(self, arg, line_number=0):
         """ return datetime object
@@ -260,8 +288,11 @@ class Individual:
         """ sets new individual gender """
         self.gender = g
     
-    def set_birthday(self, b):
+    def set_birthday(self, b, line_number):
         """ sets new individual birthday """
+        # check if birthday is before parent's marriage date, raise otherwise
+        # check if birthday is >9mo after parent's divorce date, raise otherwise
+        # might need to do a check after all family data has been added, because individuals are not added oldest to youngest
         self.birthday = b
 
     def set_age(self, line_number=0):
