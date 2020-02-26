@@ -10,7 +10,7 @@ import unittest
 from ssw555a_ged import GED_Repo, Individual
 
 
-class Test_Line_Numbers(unittest.TestCase):
+class Test_US40(unittest.TestCase):
     """ Tests that the methods that throw errors display the line number as part of the error message. """
 
     def test_strip_date(self):

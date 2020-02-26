@@ -10,7 +10,7 @@ import unittest
 from ssw555a_ged import GED_Repo, Individual
 
 
-class Test_GED_Repo(unittest.TestCase):
+class Test_US42(unittest.TestCase):
     """ Tests that the strip_date method rejects illegitimate dates by throwing ValueErrors. """
 
     def test_strip_date(self):
