@@ -10,8 +10,8 @@ from ssw555a_ged import GED_Repo, Individual, Family
 class Test_US07(unittest.TestCase):
     """ Tests that the set_ages function throws when person is over 150. """
 
-    def test_check_bday(self):
-        """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
+    def test_check_age(self):
+        """ Tests that check_age rejects illegitimate ages by throwing a ValueError. """
 
         # need following cases:
 
