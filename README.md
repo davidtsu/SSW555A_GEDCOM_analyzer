@@ -6,4 +6,4 @@ Akshay Lavhagale
 Zephyr Zambrano
 Xiaojun Zhu
 
-[![build status of master](https://travis-ci.org/davidtsu/SSW555A_GEDCOM_analyzer.svg?branch=US08)](https://travis-ci.org/davidtsu/SSW555A_GEDCOM_analyzer)
+[![build status of master](https://travis-ci.org/davidtsu/SSW555A_GEDCOM_analyzer.svg?branch=master)](https://travis-ci.org/davidtsu/SSW555A_GEDCOM_analyzer)
