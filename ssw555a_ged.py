@@ -18,8 +18,17 @@ class GED_Repo:
 
         try:
             if in_file.endswith('.ged'):
+                # read data
                 self.read_ged(self.in_file)
+
+                # finish calculating data
+                self.set_ages()
+
+                # check data
                 self.check_bday()
+
+                # printing data
+                # e.g. US35 - list recent births
             else:
                 print('Bad input file.')
         except FileNotFoundError as f:
@@ -58,7 +67,6 @@ class GED_Repo:
                     line = line.rstrip()
 
                     if line:
-
                         # split each line at spaces
                         my_tuple = tuple(line.strip().split(sep, 2))
 
@@ -101,7 +109,7 @@ class GED_Repo:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_birthday(d, line_number)
                                             ind.set_alive(True, line_number)
-                                            ind.set_age(line_number)
+                                            #ind.set_age(line_number)
                                     elif tag == 'DEAT':
                                         # must read & parse next line for DOD
                                         line = next(fp_in)
@@ -118,7 +126,7 @@ class GED_Repo:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_alive(False, line_number)
                                             ind.set_death(d, line_number)
-                                            ind.set_age(line_number)
+                                            #ind.set_age(line_number)
                                     else: #tag == 'DATE'
                                         raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
 
@@ -240,6 +248,11 @@ class GED_Repo:
                     else:
                         raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
     
+    def set_ages(self):
+        """ sets ages of individuals in individual_table """
+        for i in self.individuals.values():
+            i.set_age(i._age_line)
+    
     def strip_date(self, arg, line_number=0):
         """ return datetime object
         throws error if illegitimate date is received 
@@ -324,6 +337,7 @@ class Individual:
         """ sets new individual birthday """
         self.birthday = b
         self._birthday_line = line_number
+        self._age_line = line_number
 
     def set_age(self, line_number=0):
         """ sets new individual age 
@@ -341,6 +355,8 @@ class Individual:
                 bd = self.birthday
                 dd = self.death
                 self.age = math.floor((dd - bd).days / 365.2425)
+        if self.age >= 150:
+            raise ValueError(f'{self.name} is age {self.age} over 150 years old, on line {line_number}')
                     
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """
@@ -351,6 +367,7 @@ class Individual:
         """ sets new individual death date """
         self.death = d
         self._death_line = line_number
+        self._age_line = line_number
 
     def set_child(self, c, line_number=0):
         """ adds child to individual's children """
