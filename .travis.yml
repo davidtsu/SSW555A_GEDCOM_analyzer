@@ -2,7 +2,7 @@ language: python
 python:
  - "3.7"
 install:
-  - pip install requests
+  - pip install dateutil
 # command to run tests
 script:
- - python -m unittest ssw555a_ged_Test_Suite
+ - python -m ssw555a_ged_Test_Suite
