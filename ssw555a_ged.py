@@ -20,6 +20,8 @@ class GED_Repo:
             if in_file.endswith('.ged'):
                 self.read_ged(self.in_file)
                 self.check_bday()
+                self.US38_upcoming_birthdays()
+                self.US39_upcoming_anniversaries()
             else:
                 print('Bad input file.')
         except FileNotFoundError as f:
@@ -239,6 +241,21 @@ class GED_Repo:
                             raise ValueError(f'Individual birthday after dads death date on line {self.individuals[child]._birthday_line}')
                     else:
                         raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
+            
+    def US38_upcoming_birthdays(self):
+        """ """
+        now = datetime.now() # current date and time
+
+        today = now.strftime("%m/%d/%Y")
+        # print("today's date:",today)
+        # self.individuals = dict()
+        # for person in self.individuals:
+            # print(person)
+
+    def US39_upcoming_anniversaries(self):
+        """ """
+        # self.families = dict()
+        pass
     
     def strip_date(self, arg, line_number=0):
         """ return datetime object
@@ -267,6 +284,14 @@ class GED_Repo:
         for f in self.families.values():
             pt.add_row(f.get_values())
         print(pt)
+    
+    def US38_print_upcoming_birthdays(self):
+        """ """
+        pass
+
+    def US39_print_upcoming_anniversaries(self):
+        """ """
+        pass
 
 class Individual:
     """ stores info for a single individual """
