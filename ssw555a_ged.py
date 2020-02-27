@@ -248,6 +248,28 @@ class GED_Repo:
                     else:
                         raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
     
+    def user_story_3(self):
+        for person in self.individuals.values():
+            if person.birthday != 'NA' and person.death != 'NA':
+                if person.birthday < person.death:
+                    print(f'Individual birthday after individual death date on line {person._birthday_line}')
+
+
+    def user_story_2(self):
+        for family in self.families.values():
+            if family.married != 'NA':
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].birthday != 'NA':
+                        if self.individuals[family.wife_id].birthday > family.married:
+                            print(
+                                f'Individual birthday after individual marriage date on line {self.individuals[family.wife_id].birthday._birthday_line}')
+
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].birthday != 'NA':
+                        if self.individuals[family.husb_id].birthday > family.married:
+                            print(
+                                f'Individual birthday after individual marriage date on line {self.individuals[family.husband_id].birthday._birthday_line}')
+    
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
@@ -476,6 +498,8 @@ def main():
                 g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', folder, file))
                 g.print_individuals()
                 g.print_families()
+                g.user_story_2()
+                g.user_story_3()
             except ValueError as v:
                 print(v)
             except FileNotFoundError as f:
