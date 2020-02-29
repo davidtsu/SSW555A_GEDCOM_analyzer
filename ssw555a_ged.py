@@ -205,7 +205,7 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise ValueError(f'Bad value. Please check {ip} for bad data: {v}. GEDCOM line: {line_number}')
+            raise v
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
 
@@ -288,7 +288,7 @@ class GED_Repo:
             dt = datetime.strptime(arg, "%d %b %Y")
             return dt
         except ValueError:
-            raise ValueError(f"illegitimate date received. GEDCOM line: {line_number}")
+            raise ValueError(f"Illegitimate date of {arg}. GEDCOM line: {line_number}")
         else:
             return 'NA'
 
