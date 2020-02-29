@@ -26,6 +26,8 @@ class GED_Repo:
 
                 # check data
                 self.check_bday()
+                self.user_story_2()
+                self.user_story_3()
 
                 # printing data
                 # e.g. US35 - list recent births
@@ -109,7 +111,6 @@ class GED_Repo:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_birthday(d, line_number)
                                             ind.set_alive(True, line_number)
-                                            #ind.set_age(line_number)
                                     elif tag == 'DEAT':
                                         # must read & parse next line for DOD
                                         line = next(fp_in)
@@ -126,9 +127,10 @@ class GED_Repo:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_alive(False, line_number)
                                             ind.set_death(d, line_number)
-                                            #ind.set_age(line_number)
-                                    else: #tag == 'DATE'
-                                        raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
+                                    elif tag == 'DATE':
+                                        print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
+                                    else: # Not sure what to do with TRLR, since it just marks EOF.
+                                        break
 
                                 # check all family tags here
                                 if f_flag:
@@ -168,9 +170,10 @@ class GED_Repo:
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             fam.set_divorced(d, line_number)
-                                    else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
-                                        if tag == 'DATE':
-                                            raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
+                                    elif tag == 'DATE':
+                                        print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
+                                    else: # Not sure what to do with TRLR, since it just marks EOF.
+                                        break
 
                             if arg in tags[level]['SWAP']:
                                 # new individual/family starts here
@@ -231,44 +234,46 @@ class GED_Repo:
 
                     # if child is born before marriage date, and not yet divorced
                     if marr != 'NA' and bday < marr and div == 'NA':
-                        raise ValueError(f'Individual birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'{self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
                     # if child is born more than 9 months after divorce
                     if div != 'NA' and bday > div + relativedelta(months=9):
-                        raise ValueError(f'Individual birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'{self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
 
                     if fam.husb_id and fam.wife_id:
                         dad = self.individuals[fam.husb_id]
                         mom = self.individuals[fam.wife_id]
                         # if child is born any time after mother dies
                         if not mom.alive and mom.death < bday:
-                            raise ValueError(f'Individual birthday after mom death date on line {self.individuals[child]._birthday_line}')
+                            print(f'{self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
                         # if child dies later than nine months after father dies
                         if not dad.alive and dad.death + relativedelta(months=9) < bday:
-                            raise ValueError(f'Individual birthday after dads death date on line {self.individuals[child]._birthday_line}')
-                    else:
-                        raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
+                            print(f'{self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
+                    #else:
+                    #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
     
     def user_story_3(self):
+        """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
             if person.birthday != 'NA' and person.death != 'NA':
-                if person.birthday < person.death:
-                    print(f'Individual birthday after individual death date on line {person._birthday_line}')
+                if person.birthday > person.death:
+                    print(f'{person.name} birthday after death date on line {person._birthday_line}')
 
 
     def user_story_2(self):
+        """ checks if a person's birthday occurs before their marriage """
         for family in self.families.values():
             if family.married != 'NA':
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].birthday != 'NA':
                         if self.individuals[family.wife_id].birthday > family.married:
                             print(
-                                f'Individual birthday after individual marriage date on line {self.individuals[family.wife_id].birthday._birthday_line}')
+                                f'{self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].birthday != 'NA':
                         if self.individuals[family.husb_id].birthday > family.married:
                             print(
-                                f'Individual birthday after individual marriage date on line {self.individuals[family.husband_id].birthday._birthday_line}')
+                                f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
     
     def set_ages(self):
         """ sets ages of individuals in individual_table """
@@ -372,13 +377,13 @@ class Individual:
             self.age = math.floor((cd - bd).days / 365.2425)
         else:
             if self.death == 'NA':
-                raise f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOM line: {line_number}'
+                print(f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOM line: {line_number}')
             else:
                 bd = self.birthday
                 dd = self.death
                 self.age = math.floor((dd - bd).days / 365.2425)
         if self.age >= 150:
-            raise ValueError(f'{self.name} is age {self.age} over 150 years old, on line {line_number}')
+            print(f'{self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
                     
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """
@@ -498,8 +503,6 @@ def main():
                 g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', folder, file))
                 g.print_individuals()
                 g.print_families()
-                g.user_story_2()
-                g.user_story_3()
             except ValueError as v:
                 print(v)
             except FileNotFoundError as f:

@@ -1,6 +1,6 @@
 """
 User Story 07 (US07) - Test File
-US09: Less than 150 years old
+US07: Less than 150 years old
 @Author: David Tsu, Zephyr Zambrano, Xiaojun Zhu
 """
 
