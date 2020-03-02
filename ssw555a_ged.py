@@ -32,7 +32,6 @@ class GED_Repo:
                 self.user_story_3()
                 self.user_story_5()
                 self.user_story_6()
-                self.user_story_10()
 
                 # printing data
                 # e.g. US35 - list recent births
@@ -259,7 +258,6 @@ class GED_Repo:
     def user_story_01(self):
         """"check if Dates (birth, marriage, divorce, death) should not be after the current date"""
         for person in self.individuals.values():
-
             pb=person.birthday
             pd=person.death
             td=datetime.today()
@@ -276,7 +274,10 @@ class GED_Repo:
                  print(f'user_story_01_divorce after today on line{family._divorced_line}')
 
     def user_story_2(self):
-        """ checks if a person's birthday occurs before their marriage """
+        """
+        US02: checks if a person's birthday occurs before their marriage
+        US10: checks if person was at least 14 by their marriage date
+        """
         for family in self.families.values():
             if family.married != 'NA':
                 if family.wife_id != 'NA':
@@ -284,12 +285,18 @@ class GED_Repo:
                         if self.individuals[family.wife_id].birthday > family.married:
                             print(
                                 f'{self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
+                        elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
+                            print(
+                                f'{self.individuals[family.wife_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.wife_id]._birthday_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].birthday != 'NA':
                         if self.individuals[family.husb_id].birthday > family.married:
                             print(
                                 f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
+                        elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
+                            print(
+                                f'{self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
 
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
@@ -333,17 +340,6 @@ class GED_Repo:
         for i in self.individuals.values():
             i.set_age(i._age_line)
 
-    def user_story_10(self):
-        """"check Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
-        for fam in self.families.values():
-            if fam.married !='NA':
-                marr = fam.married
-                dad_bd = self.individuals[fam.husb_id].birthday
-                mom_bd = self.individuals[fam.wife_id].birthday
-                if (marr<dad_bd+ relativedelta(years=14)) :
-                    print(f'user_story_10_Marriage should be at least 14 years for dad Name as {self.individuals[fam.husb_id].name}')
-                if (marr<mom_bd+ relativedelta(years=14)):
-                    print(f'user_story_10_Marriage should be at least 14 years for Mom Name as {self.individuals[fam.wife_id].name}')
 
     def strip_date(self, arg, line_number=0):
         """ return datetime object
