@@ -8,10 +8,10 @@ import unittest, os, io, sys
 from collections import Counter
 from ssw555a_ged import GED_Repo, Individual, Family
 
-class Test_US02(unittest.TestCase):
+class Test_US02_US03(unittest.TestCase):
     """ Tests that the user_story_2 function prints when person is married before they are born. """
 
-    def test_user_story_2(self):
+    def test_user_story_2_and_3(self):
         """ Tests that user_story_2 rejects illegitimate marriages before birthdays. """
 
         # need following cases:
