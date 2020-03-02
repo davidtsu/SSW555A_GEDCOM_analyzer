@@ -1,21 +1,18 @@
 """
-User Story 08 (US08) - Test File
-US08: Birth before marriage of parents
-@Author: David Tsu
+User Story 01 (US01) - Test File
+US01: Dates (birth, marriage, divorce, death) should not be after the current date
+@Author: Xiaojun zhu
 """
 
-import unittest, os, io, sys
-from ssw555a_ged import GED_Repo
+class Test_user_story_01(unittest.TestCase):
+    """ Tests that theuser_story_01 function throws when expected. """
 
-class Test_US08(unittest.TestCase):
-    """ Tests that the check_bday function throws when expected. """
-
-    def test_check_bday1(self):
-        """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
+    def test_check_user_story_01(self):
+        """ Tests that user_story_01 rejects illegitimate Dates (birth, marriage, divorce, death) by throwing a ValueError. """
 
         # need following cases:
-        # birthday before marriage
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_Before_Marriage.ged'))
+        # birthday after today
+        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_birthday after today.ged'))
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()
