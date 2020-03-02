@@ -27,6 +27,8 @@ class GED_Repo:
 
                 # check data
                 self.check_bday()
+                self.user_story_2()
+                self.user_story_3()
                 self.user_story_5()
                 self.user_story_6()
 
@@ -252,6 +254,29 @@ class GED_Repo:
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
+    def user_story_2(self):
+        """ checks if a person's birthday occurs before their marriage """
+        for family in self.families.values():
+            if family.married != 'NA':
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].birthday != 'NA':
+                        if self.individuals[family.wife_id].birthday > family.married:
+                            print(
+                                f'{self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
+
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].birthday != 'NA':
+                        if self.individuals[family.husb_id].birthday > family.married:
+                            print(
+                                f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
+
+    def user_story_3(self):
+        """ checks if a person's birthday occurs before their death day """
+        for person in self.individuals.values():
+            if person.birthday != 'NA' and person.death != 'NA':
+                if person.birthday > person.death:
+                    print(f'{person.name} birthday after death date on line {person._birthday_line}')
+                    
     def user_story_5(self):
         """ checks that marriage should occur before death of either spouse """
         for family in self.families.values():
