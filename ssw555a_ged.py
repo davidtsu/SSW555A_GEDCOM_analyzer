@@ -29,6 +29,7 @@ class GED_Repo:
                 self.check_bday()
                 self.user_story_5()
                 self.user_story_6()
+
                 # printing data
                 # e.g. US35 - list recent births
             else:
@@ -252,14 +253,14 @@ class GED_Repo:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
     def user_story_5(self):
-        # Marriage should occur before death of either spouse
+        """ checks that marriage should occur before death of either spouse """
         for family in self.families.values():
             if family.married != 'NA':
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].death != 'NA':
                         if self.individuals[family.wife_id].death < family.married:
                             print(
-                                f'{self.individuals[family.wife_id].name} married after individual death date on line {family_married_line}')
+                                f'{self.individuals[family.wife_id].name} married after individual death date on line {family._married_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].death != 'NA':
@@ -268,7 +269,7 @@ class GED_Repo:
                                 f'{self.individuals[family.husb_id].name} married after individual death date on line {family._married_line}')
 
     def user_story_6(self):
-        # Divorce can only occur before death of both spouses
+        """ checks that divorce can only occur before death of both spouses """
         for family in self.families.values():
             if family.divorced != 'NA':
                 if family.wife_id != 'NA':
