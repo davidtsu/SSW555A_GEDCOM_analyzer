@@ -1,6 +1,6 @@
 """
 User Story 05 (US05) - Test File
-US08: Birth before marriage of parents
+US05: Marriage should occur before death of either spouse
 @Author: Akshay Lavhagale
 """
 
