@@ -1,6 +1,6 @@
 """
 User Story 06 (US06) - Test File
-US08: Birth before marriage of parents
+US06: Divorce can only occur before death of both spouses
 @Author: Akshay Lavhagale
 """
 
