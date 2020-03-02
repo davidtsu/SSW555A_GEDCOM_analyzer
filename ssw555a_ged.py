@@ -8,7 +8,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 from datetime import date
-
+td=datetime.today()
 class GED_Repo:
     """ stores data from a GEDCOM file """
     def __init__(self, in_file):
@@ -27,10 +27,12 @@ class GED_Repo:
 
                 # check data
                 self.check_bday()
+                self.user_story_01()
                 self.user_story_2()
                 self.user_story_3()
                 self.user_story_5()
                 self.user_story_6()
+                self.user_story_10()
 
                 # printing data
                 # e.g. US35 - list recent births
