@@ -19,7 +19,7 @@ class Test_US05(unittest.TestCase):
         g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US05', 'ssw555a_input.ged'))
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
-        g.check_bday()
+        g.user_story_6()
         sys.stdout = sys.__stdout__
         output_str1 = 'Olivia /Mann/ divorce after individual death date on line 183\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
