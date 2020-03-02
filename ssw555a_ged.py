@@ -8,6 +8,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 
+
 class GED_Repo:
     """ stores data from a GEDCOM file """
     def __init__(self, in_file):
@@ -28,6 +29,8 @@ class GED_Repo:
                 self.check_bday()
                 self.user_story_2()
                 self.user_story_3()
+                self.user_story_5()
+                self.user_story_6()
 
                 # printing data
                 # e.g. US35 - list recent births
@@ -250,14 +253,6 @@ class GED_Repo:
                             print(f'{self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
-    
-    def user_story_3(self):
-        """ checks if a person's birthday occurs before their death day """
-        for person in self.individuals.values():
-            if person.birthday != 'NA' and person.death != 'NA':
-                if person.birthday > person.death:
-                    print(f'{person.name} birthday after death date on line {person._birthday_line}')
-
 
     def user_story_2(self):
         """ checks if a person's birthday occurs before their marriage """
@@ -274,15 +269,52 @@ class GED_Repo:
                         if self.individuals[family.husb_id].birthday > family.married:
                             print(
                                 f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
-    
+
+    def user_story_3(self):
+        """ checks if a person's birthday occurs before their death day """
+        for person in self.individuals.values():
+            if person.birthday != 'NA' and person.death != 'NA':
+                if person.birthday > person.death:
+                    print(f'{person.name} birthday after death date on line {person._birthday_line}')
+                    
+    def user_story_5(self):
+        """ checks that marriage should occur before death of either spouse """
+        for family in self.families.values():
+            if family.married != 'NA':
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].death != 'NA':
+                        if self.individuals[family.wife_id].death < family.married:
+                            print(
+                                f'{self.individuals[family.wife_id].name} married after individual death date on line {family._married_line}')
+
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].death != 'NA':
+                        if self.individuals[family.husb_id].death < family.married:
+                            print(
+                                f'{self.individuals[family.husb_id].name} married after individual death date on line {family._married_line}')
+
+    def user_story_6(self):
+        """ checks that divorce can only occur before death of both spouses """
+        for family in self.families.values():
+            if family.divorced != 'NA':
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].death != 'NA':
+                        if self.individuals[family.wife_id].death < family.divorced:
+                                print(f'{self.individuals[family.wife_id].name} divorce after individual death date on line {family._divorced_line}')
+
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].death != 'NA':
+                        if self.individuals[family.husb_id].death < family.divorced:
+                                print(f'{self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
             i.set_age(i._age_line)
-    
+
     def strip_date(self, arg, line_number=0):
         """ return datetime object
-        throws error if illegitimate date is received 
+        throws error if illegitimate date is received
         part of US42 """
         try:
             dt = datetime.strptime(arg, "%d %b %Y")
@@ -308,9 +340,10 @@ class GED_Repo:
             pt.add_row(f.get_values())
         print(pt)
 
+
 class Individual:
     """ stores info for a single individual """
-    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA'):
+    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA'):
         """ constructor for Individual """
         self.iid = iid              # string
         self._iid_line = 0
@@ -339,6 +372,9 @@ class Individual:
         self.spouse = spouse        # set
         self._spouse_lines = set()
 
+        self.married = married      # datetime object
+        self._married_line = 0
+
     def get_values(self):
         """ returns all values in individual as list for use in print """
         b = 'NA' if self.birthday == 'NA' or self.birthday == '' else self.birthday.strftime("%Y-%m-%d")
@@ -359,7 +395,7 @@ class Individual:
         """ sets new individual gender """
         self.gender = g
         self._gender_line = line_number
-    
+
     def set_birthday(self, b, line_number=0):
         """ sets new individual birthday """
         self.birthday = b
@@ -367,7 +403,7 @@ class Individual:
         self._age_line = line_number
 
     def set_age(self, line_number=0):
-        """ sets new individual age 
+        """ sets new individual age
         throws error if illegitimate date is received
         part of US42 """
         self._age_line = line_number
@@ -384,7 +420,7 @@ class Individual:
                 self.age = math.floor((dd - bd).days / 365.2425)
         if self.age >= 150:
             print(f'{self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
-                    
+
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """
         self.alive = a
@@ -404,7 +440,7 @@ class Individual:
         else:
             self.child = {c} if (c and c != 'NA') else 'NA'
             self._child_line = {line_number}
-    
+
     def set_spouse(self, s, line_number=0):
         """ sets new individual spouse """
         if isinstance(self.spouse, set):
@@ -414,9 +450,10 @@ class Individual:
             self.spouse = {s} if (s and s != 'NA') else 'NA'
             self._spouse_lines = {line_number}
 
+
 class Family:
     """ stores info for a family """
-    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA'):
+    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA', death = 'NA'):
         """ constructor for family """
         self.fid = fid                  # string
         self._fid_line = 0
@@ -442,6 +479,9 @@ class Family:
         self.children = children        # set
         self._children_lines = set()
 
+        self.death = death  # datetime object
+        self._death_line = 0
+
     def get_values(self):
         """ returns all values in family for use in print """
         m = 'NA' if self.married == 'NA' else self.married.strftime("%Y-%m-%d")
@@ -462,6 +502,11 @@ class Family:
         """ sets new family divorce date """
         self.divorced = d if d else 'NA'
         self._divorced_line = line_number
+
+    def set_death(self, d, line_number=0):
+        """ sets new family divorce date """
+        self.death = d if d else 'NA'
+        self._death_line = line_number
 
     def set_husb_id(self, h, line_number=0):
         """ sets new family husb_id """
@@ -492,6 +537,7 @@ class Family:
             self.children = {c} if (c and c != 'NA') else 'NA'
             self._children_lines = {line_number}
 
+
 def main():
     """ for running GED reader. """
 
@@ -507,6 +553,7 @@ def main():
                 print(v)
             except FileNotFoundError as f:
                 print(f)
+
 
 if __name__ == '__main__':
     main()
