@@ -8,7 +8,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 from datetime import date
-td=datetime.today()
+
 class GED_Repo:
     """ stores data from a GEDCOM file """
     def __init__(self, in_file):
@@ -256,6 +256,25 @@ class GED_Repo:
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
+    def user_story_01(self):
+        """"check if Dates (birth, marriage, divorce, death) should not be after the current date"""
+        for person in self.individuals.values():
+
+            pb=person.birthday
+            pd=person.death
+            td=datetime.today()
+            if pb !="NA" and pb>td:
+                print(f'{person.name} user_story_01_birthday after today on line{person._birthday_line}')
+            if pd !="NA" and pd>td:
+                print(f'{person.name} user_story_01_deathday after today on line{person._death_line}')
+        for family in self.families.values():
+            fm=family.married 
+            fd=family.divorced
+            if fm !="NA" and fm>td:
+                print(f'{self.individuals[family.wife_id].name}user_story_01_marriage after today on line{family._married_line}')
+            if fd !="NA" and fd>td:
+                 print(f'user_story_01_divorce after today on line{family._divorced_line}')
+
     def user_story_2(self):
         """ checks if a person's birthday occurs before their marriage """
         for family in self.families.values():
@@ -313,6 +332,18 @@ class GED_Repo:
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
             i.set_age(i._age_line)
+
+    def user_story_10(self):
+        """"check Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
+        for fam in self.families.values():
+            if fam.married !='NA':
+                marr = fam.married
+                dad_bd = self.individuals[fam.husb_id].birthday
+                mom_bd = self.individuals[fam.wife_id].birthday
+                if (marr<dad_bd+ relativedelta(years=14)) :
+                    print(f'user_story_10_Marriage should be at least 14 years for dad Name as {self.individuals[fam.husb_id].name}')
+                if (marr<mom_bd+ relativedelta(years=14)):
+                    print(f'user_story_10_Marriage should be at least 14 years for Mom Name as {self.individuals[fam.wife_id].name}')
 
     def strip_date(self, arg, line_number=0):
         """ return datetime object
