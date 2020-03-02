@@ -7,7 +7,7 @@ import os, math
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
-
+from datetime import date
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
@@ -27,6 +27,7 @@ class GED_Repo:
 
                 # check data
                 self.check_bday()
+                self.user_story_01()
                 self.user_story_2()
                 self.user_story_3()
                 self.user_story_5()
@@ -254,8 +255,29 @@ class GED_Repo:
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
+    def user_story_01(self):
+        """"check if Dates (birth, marriage, divorce, death) should not be after the current date"""
+        for person in self.individuals.values():
+            pb=person.birthday
+            pd=person.death
+            td=datetime.today()
+            if pb !="NA" and pb>td:
+                print(f'{person.name} user_story_01_birthday after today on line{person._birthday_line}')
+            if pd !="NA" and pd>td:
+                print(f'{person.name} user_story_01_deathday after today on line{person._death_line}')
+        for family in self.families.values():
+            fm=family.married 
+            fd=family.divorced
+            if fm !="NA" and fm>td:
+                print(f'{self.individuals[family.wife_id].name}user_story_01_marriage after today on line{family._married_line}')
+            if fd !="NA" and fd>td:
+                 print(f'user_story_01_divorce after today on line{family._divorced_line}')
+
     def user_story_2(self):
-        """ checks if a person's birthday occurs before their marriage """
+        """
+        US02: checks if a person's birthday occurs before their marriage
+        US10: checks if person was at least 14 by their marriage date
+        """
         for family in self.families.values():
             if family.married != 'NA':
                 if family.wife_id != 'NA':
@@ -263,12 +285,18 @@ class GED_Repo:
                         if self.individuals[family.wife_id].birthday > family.married:
                             print(
                                 f'{self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
+                        elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
+                            print(
+                                f'{self.individuals[family.wife_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.wife_id]._birthday_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].birthday != 'NA':
                         if self.individuals[family.husb_id].birthday > family.married:
                             print(
                                 f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
+                        elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
+                            print(
+                                f'{self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
 
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
@@ -311,6 +339,7 @@ class GED_Repo:
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
             i.set_age(i._age_line)
+
 
     def strip_date(self, arg, line_number=0):
         """ return datetime object
@@ -537,7 +566,20 @@ class Family:
             self.children = {c} if (c and c != 'NA') else 'NA'
             self._children_lines = {line_number}
 
-
+def us01_check_before_today(p):
+  if isinstance(p,datetime):
+    today=date.today()
+    today_datetime=datetime(today.year, today.month, today.day)
+    date_vs_today=math.floor((p-today_datetime).days)
+    # print((p-today_datetime).days)
+    # print(date_vs_today)
+    if date_vs_today<-1:
+      # print(type(p))
+      return(p.date())
+    else:
+      return("Error:Dates should not be after the current date")
+  else:
+    return("Error:Date is not date.time format")
 def main():
     """ for running GED reader. """
 
