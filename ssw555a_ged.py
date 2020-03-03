@@ -73,17 +73,7 @@ class GED_Repo:
                     line = line.rstrip()
 
                     if line:
-                        # split each line at spaces
-                        my_tuple = tuple(line.strip().split(sep, 2))
-
-                        # non_blank_lines generator removes blank lines, might not need generator with this check in place.
-                        if len(my_tuple) < 2:
-                            raise ValueError(f'Line in {ip} has too few values. Please fix and try again. GEDCOM line: {line_number}')
-
-                        # renaming for sanity
-                        level = my_tuple[0]
-                        tag = my_tuple[1]
-                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
 
                         # level and tag checking
                         if level in tags.keys():
@@ -103,12 +93,7 @@ class GED_Repo:
                                         # must read & parse next line for DOB
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
@@ -119,12 +104,7 @@ class GED_Repo:
                                         # must read & parse next line for DOD
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
@@ -134,7 +114,7 @@ class GED_Repo:
                                     elif tag == 'DATE':
                                         print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
                                     else: # Not sure what to do with TRLR, since it just marks EOF.
-                                        break
+                                        break #print(f'Reached end of {ip}')
 
                                 # check all family tags here
                                 if f_flag:
@@ -149,12 +129,7 @@ class GED_Repo:
                                     elif tag == 'MARR':
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
@@ -163,12 +138,7 @@ class GED_Repo:
                                     elif tag == 'DIV':
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
@@ -177,7 +147,7 @@ class GED_Repo:
                                     elif tag == 'DATE':
                                         print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
                                     else: # Not sure what to do with TRLR, since it just marks EOF.
-                                        break
+                                        break #print(f'Reached end of {ip}')
 
                             if arg in tags[level]['SWAP']:
                                 # new individual/family starts here
@@ -212,6 +182,13 @@ class GED_Repo:
             raise v
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
+    
+    def line_to_tuple(self, line, sep, line_number):
+        """ reads line, returns values in input """
+        s = line.strip().split(sep, 2)
+        if len(s) < 2:
+            raise ValueError(f'Line {line_number} has too few values.')
+        return tuple((s[i] if i < len(s) else "" for i in range(3)))
 
     def add_individual(self, i):
         """ must pass in individual """
