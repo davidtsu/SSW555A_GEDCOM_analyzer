@@ -238,20 +238,20 @@ class GED_Repo:
 
                     # if child is born before marriage date, and not yet divorced
                     if marr != 'NA' and bday < marr and div == 'NA':
-                        print(f'{self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
                     # if child is born more than 9 months after divorce
                     if div != 'NA' and bday > div + relativedelta(months=9):
-                        print(f'{self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
 
                     if fam.husb_id and fam.wife_id:
                         dad = self.individuals[fam.husb_id]
                         mom = self.individuals[fam.wife_id]
                         # if child is born any time after mother dies
                         if not mom.alive and mom.death < bday:
-                            print(f'{self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
+                            print(f'US09 - {self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
                         # if child dies later than nine months after father dies
                         if not dad.alive and dad.death + relativedelta(months=9) < bday:
-                            print(f'{self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
+                            print(f'US09 - {self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
@@ -262,16 +262,16 @@ class GED_Repo:
             pd=person.death
             td=datetime.today()
             if pb !="NA" and pb>td:
-                print(f'{person.name} user_story_01_birthday after today on line{person._birthday_line}')
+                print(f'US01 - {person.name} birthday after today on line {person._birthday_line}')
             if pd !="NA" and pd>td:
-                print(f'{person.name} user_story_01_deathday after today on line{person._death_line}')
+                print(f'US01 - {person.name} death after today on line {person._death_line}')
         for family in self.families.values():
             fm=family.married 
             fd=family.divorced
             if fm !="NA" and fm>td:
-                print(f'{self.individuals[family.wife_id].name}user_story_01_marriage after today on line{family._married_line}')
+                print(f'US01 - {self.individuals[family.wife_id].name} marriage after today on line {family._married_line}')
             if fd !="NA" and fd>td:
-                 print(f'user_story_01_divorce after today on line{family._divorced_line}')
+                 print(f'US01 - {self.individuals[family.husb_id].name} divorce after today on line {family._divorced_line}')
 
     def user_story_2(self):
         """
@@ -284,26 +284,26 @@ class GED_Repo:
                     if self.individuals[family.wife_id].birthday != 'NA':
                         if self.individuals[family.wife_id].birthday > family.married:
                             print(
-                                f'{self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
+                                f'US02 - {self.individuals[family.wife_id].name} birthday after marriage date on line {self.individuals[family.wife_id]._birthday_line}')
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
-                                f'{self.individuals[family.wife_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.wife_id]._birthday_line}')
+                                f'US10 - {self.individuals[family.wife_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.wife_id]._birthday_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].birthday != 'NA':
                         if self.individuals[family.husb_id].birthday > family.married:
                             print(
-                                f'{self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
+                                f'US02 - {self.individuals[family.husb_id].name} birthday after marriage date on line {self.individuals[family.husb_id]._birthday_line}')
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
-                                f'{self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
+                                f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
 
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
             if person.birthday != 'NA' and person.death != 'NA':
                 if person.birthday > person.death:
-                    print(f'{person.name} birthday after death date on line {person._birthday_line}')
+                    print(f'US03 - {person.name} birthday after death date on line {person._birthday_line}')
                     
     def user_story_5(self):
         """ checks that marriage should occur before death of either spouse """
@@ -313,13 +313,13 @@ class GED_Repo:
                     if self.individuals[family.wife_id].death != 'NA':
                         if self.individuals[family.wife_id].death < family.married:
                             print(
-                                f'{self.individuals[family.wife_id].name} married after individual death date on line {family._married_line}')
+                                f'US05 - {self.individuals[family.wife_id].name} married after individual death date on line {family._married_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.married:
                             print(
-                                f'{self.individuals[family.husb_id].name} married after individual death date on line {family._married_line}')
+                                f'US05 - {self.individuals[family.husb_id].name} married after individual death date on line {family._married_line}')
 
     def user_story_6(self):
         """ checks that divorce can only occur before death of both spouses """
@@ -328,12 +328,12 @@ class GED_Repo:
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].death != 'NA':
                         if self.individuals[family.wife_id].death < family.divorced:
-                                print(f'{self.individuals[family.wife_id].name} divorce after individual death date on line {family._divorced_line}')
+                                print(f'US06 - {self.individuals[family.wife_id].name} divorce after individual death date on line {family._divorced_line}')
 
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
-                                print(f'{self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+                                print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
@@ -349,7 +349,7 @@ class GED_Repo:
             dt = datetime.strptime(arg, "%d %b %Y")
             return dt
         except ValueError:
-            raise ValueError(f"Illegitimate date of {arg}. GEDCOM line: {line_number}")
+            raise ValueError(f"US42 - Illegitimate date of {arg}. GEDCOM line: {line_number}")
         else:
             return 'NA'
 
@@ -448,7 +448,7 @@ class Individual:
                 dd = self.death
                 self.age = math.floor((dd - bd).days / 365.2425)
         if self.age >= 150:
-            print(f'{self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
+            print(f'US07 - {self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
 
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """

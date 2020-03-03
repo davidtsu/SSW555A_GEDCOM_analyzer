@@ -18,7 +18,7 @@ class Test_US07(unittest.TestCase):
         sys.stdout = capturedOutput
         g.individuals['@I1@'].set_age(24)
         sys.stdout = sys.__stdout__
-        output_str1 = 'Redmond /Mann/ is age 159, which is over 150 years old, on line 24\n'
+        output_str1 = 'US07 - Redmond /Mann/ is age 159, which is over 150 years old, on line 24\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_set_age2(self):

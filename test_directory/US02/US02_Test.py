@@ -25,9 +25,9 @@ class Test_US02_US03(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_2()
         sys.stdout = sys.__stdout__
-        output_str1 = '''Natalie /Jones/ birthday after marriage date on line 41
-Bob /Johnson/ birthday after marriage date on line 31
-Mary /Miller/ birthday after marriage date on line 110'''
+        output_str1 = '''US02 - Natalie /Jones/ birthday after marriage date on line 41
+US02 - Bob /Johnson/ birthday after marriage date on line 31
+US02 - Mary /Miller/ birthday after marriage date on line 110'''
         c1 = Counter(capturedOutput.getvalue())
         c2 = Counter(output_str1)
         us02_true = all(k in c1 and c1[k] >= c2[k] for k in c2)
@@ -36,8 +36,8 @@ Mary /Miller/ birthday after marriage date on line 110'''
         sys.stdout = capturedOutput
         g.user_story_3()
         sys.stdout = sys.__stdout__
-        output_str2 = '''Ella /Moore/ birthday after death date on line 87
-Diana /Brown/ birthday after death date on line 121'''
+        output_str2 = '''US03 - Ella /Moore/ birthday after death date on line 87
+US03 - Diana /Brown/ birthday after death date on line 121'''
         c3 = Counter(capturedOutput.getvalue())
         c4 = Counter(output_str2)
         us03_true = all(k in c3 and c3[k] >= c4[k] for k in c4)

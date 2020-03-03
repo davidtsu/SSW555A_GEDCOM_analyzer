@@ -18,7 +18,7 @@ class Test_user_story_10(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_2()
         sys.stdout = sys.__stdout__
-        output_str1 = 'Jodie /Hooke/ was less than 14 years old at time of marriage on line 30\nCaptain /Hooke/ was less than 14 years old at time of marriage on line 21\n'
+        output_str1 = 'US10 - Jodie /Hooke/ was less than 14 years old at time of marriage on line 30\nUS10 - Captain /Hooke/ was less than 14 years old at time of marriage on line 21\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ class Test_US08(unittest.TestCase):
         sys.stdout = capturedOutput
         g.check_bday()
         sys.stdout = sys.__stdout__
-        output_str1 = 'Jim /Smith/ birthday before marriage on line 39\n'
+        output_str1 = 'US08 - Jim /Smith/ birthday before marriage on line 39\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_check_bday2(self):
@@ -31,7 +31,7 @@ class Test_US08(unittest.TestCase):
         sys.stdout = capturedOutput
         g.check_bday()
         sys.stdout = sys.__stdout__
-        output_str1 = 'John /Smith/ birthday before marriage on line 21\n'
+        output_str1 = 'US08 - John /Smith/ birthday before marriage on line 21\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_check_bday3(self):

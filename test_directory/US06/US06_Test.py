@@ -21,7 +21,7 @@ class Test_US06(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_6()
         sys.stdout = sys.__stdout__
-        output_str1 = 'Olivia /Mann/ divorce after individual death date on line 183\n'
+        output_str1 = 'US06 - Olivia /Mann/ divorce after individual death date on line 183\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 
