@@ -566,20 +566,6 @@ class Family:
             self.children = {c} if (c and c != 'NA') else 'NA'
             self._children_lines = {line_number}
 
-def us01_check_before_today(p):
-  if isinstance(p,datetime):
-    today=date.today()
-    today_datetime=datetime(today.year, today.month, today.day)
-    date_vs_today=math.floor((p-today_datetime).days)
-    # print((p-today_datetime).days)
-    # print(date_vs_today)
-    if date_vs_today<-1:
-      # print(type(p))
-      return(p.date())
-    else:
-      return("Error:Dates should not be after the current date")
-  else:
-    return("Error:Date is not date.time format")
 def main():
     """ for running GED reader. """
 
