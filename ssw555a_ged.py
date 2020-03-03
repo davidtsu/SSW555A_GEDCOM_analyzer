@@ -234,10 +234,10 @@ class GED_Repo:
 
     def user_story_01(self):
         """"check if Dates (birth, marriage, divorce, death) should not be after the current date"""
+        td=datetime.today()
         for person in self.individuals.values():
             pb=person.birthday
             pd=person.death
-            td=datetime.today()
             if pb !="NA" and pb>td:
                 print(f'US01 - {person.name} birthday after today on line {person._birthday_line}')
             if pd !="NA" and pd>td:
