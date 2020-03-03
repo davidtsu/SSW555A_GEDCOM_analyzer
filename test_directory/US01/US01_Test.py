@@ -53,7 +53,7 @@ class Test_user_story_01(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_01()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US01 - Jaf /Jo/ divorce after today on line 39\n'
+        output_str1 = 'US01 - Jim /Jo/ divorce after today on line 39\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 if __name__ == "__main__":
