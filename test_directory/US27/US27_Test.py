@@ -1,13 +1,13 @@
 """
-User Story 07 (US07) - Test File
-US07: Less than 150 years old
+User Story 27 (US27) - Test File
+US27: Include Individual Ages
 @Author: David Tsu, Zephyr Zambrano, Xiaojun Zhu
 """
 
 import unittest, os, io, sys
 from ssw555a_ged import GED_Repo, Individual, Family
 
-class Test_US07(unittest.TestCase):
+class Test_US27(unittest.TestCase):
     """ Tests that the set_ages function calculates age correctly. """
 
     def test_set_age1(self):
