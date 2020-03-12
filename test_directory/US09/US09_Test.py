@@ -13,7 +13,7 @@ class Test_US09(unittest.TestCase):
     def test_check_bday1(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
         # birth after mother's death (failure)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US09', 'US09_Birth_After_Death_Mom_Bad.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US09', 'US09_Birth_After_Death_Mom_Bad.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()
@@ -24,7 +24,7 @@ class Test_US09(unittest.TestCase):
     def test_check_bday2(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
         # birth after father's death, outside 9 months (failure)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US09', 'US09_Birth_After_Death_Dad_Bad.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US09', 'US09_Birth_After_Death_Dad_Bad.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()

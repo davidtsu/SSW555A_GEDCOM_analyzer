@@ -26,6 +26,7 @@ class GED_Repo:
 
                     # finish calculating data
                     self.set_ages()
+
                 else:
                     print('Bad input file.')
 

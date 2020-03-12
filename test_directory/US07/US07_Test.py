@@ -16,7 +16,7 @@ class Test_US07(unittest.TestCase):
         g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US07', 'US07_Over_150.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
-        g.individuals['@I1@'].set_age(24)
+        g.individuals['@I1-US07-A@'].set_age(24)
         sys.stdout = sys.__stdout__
         output_str1 = 'US07 - Redmond /Mann/ is age 159, which is over 150 years old, on line 24\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
