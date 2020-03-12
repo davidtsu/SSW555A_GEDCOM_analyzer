@@ -15,7 +15,7 @@ class Test_US08(unittest.TestCase):
 
         # need following cases:
         # birthday before marriage
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_Before_Marriage.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_Before_Marriage.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()
@@ -26,7 +26,7 @@ class Test_US08(unittest.TestCase):
     def test_check_bday2(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
         # birthday after divorce (after 9mo)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Divorce_Bad.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Divorce_Bad.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()
@@ -37,7 +37,7 @@ class Test_US08(unittest.TestCase):
     def test_check_bday3(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
         # birthday during marriage (normal case)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Marriage.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Marriage.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()
@@ -48,7 +48,7 @@ class Test_US08(unittest.TestCase):
     def test_check_bday4(self):
         """ Tests that check_bday rejects illegitimate birthdays by throwing a ValueError. """
         # birthday after divorce (within 9mo)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Divorce_Good.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US08', 'US08_Birth_After_Divorce_Good.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()

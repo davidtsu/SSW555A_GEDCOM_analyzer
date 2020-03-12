@@ -15,7 +15,7 @@ class Test_user_story_01(unittest.TestCase):
 
         # need following cases:
         # birthday after today
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_birthday_after_today.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_birthday_after_today.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_01()
@@ -26,7 +26,7 @@ class Test_user_story_01(unittest.TestCase):
     def test_check_user_story_01_2(self):
         """ Tests that user_story_01 rejects illegitimate death day by throwing a ValueError. """
         # deathday after today
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_deathday_after_today.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_deathday_after_today.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_01()
@@ -37,7 +37,7 @@ class Test_user_story_01(unittest.TestCase):
     def test_check_user_story_01_3(self):
         """ Tests that user_story_01 rejects illegitimate marriage day by throwing a ValueError. """
         # marriage day before today
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_marriage_after_today.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_marriage_after_today.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_01()
@@ -48,7 +48,7 @@ class Test_user_story_01(unittest.TestCase):
     def test_check_user_story_01_4(self):
         """ Tests that user_story_01 rejects illegitimate divorce day by throwing a ValueError. """
         # birthday after divorce (within 9mo)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_divorce_after_today.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US01', 'US01_divorce_after_today.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_01()

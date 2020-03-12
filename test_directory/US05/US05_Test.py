@@ -15,7 +15,7 @@ class Test_US05(unittest.TestCase):
 
         # need following cases:
         # marriage before death
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US05', 'US05_spr1.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US05', 'US05_spr1.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_5()

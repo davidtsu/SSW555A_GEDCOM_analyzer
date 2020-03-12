@@ -11,32 +11,35 @@ from datetime import date
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
-    def __init__(self, in_file):
+    def __init__(self, in_folder):
         """ constructor for GED_Repo, creates list of individuals and families """
-        self.in_file = in_file
         self.individuals = dict()
         self.families = dict()
 
         try:
-            if in_file.endswith('.ged'):
-                # read data
-                self.read_ged(self.in_file)
+            # read all files from folder, saves to individuals and families dictionaries
+            for in_file in in_folder:
+                if in_file.endswith('.ged'):
+                    # read data
+                    print(f'Reading GED data from {in_file}')
+                    self.read_ged(in_file)
 
-                # finish calculating data
-                self.set_ages()
+                    # finish calculating data
+                    self.set_ages()
+                else:
+                    print('Bad input file.')
 
-                # check data
-                self.check_bday()
-                self.user_story_01()
-                self.user_story_2()
-                self.user_story_3()
-                self.user_story_5()
-                self.user_story_6()
+            # after reading all files from folder, check data
+            self.check_bday()       # US08 and US09
+            self.user_story_01()    # US01
+            self.user_story_2()     # US02 and US10
+            self.user_story_3()     # US03
+            self.user_story_5()     # US05
+            self.user_story_6()     # US06
 
-                # printing data
-                # e.g. US35 - list recent births
-            else:
-                print('Bad input file.')
+            # printing data
+            # e.g. US35 - list recent births
+
         except FileNotFoundError as f:
             raise f
         except ValueError as v:
@@ -199,6 +202,10 @@ class GED_Repo:
         """ must pass in family """
         self.families[f.fid] = f
         return Family()
+
+    def a_before_b(self, a, b):
+        """ compares a to b, returns true if a occurs before b (a < b), false otherwise """
+        pass
 
     def check_bday(self):
         """ iterates through family dictionary, finding birthday issues
@@ -548,16 +555,15 @@ def main():
 
     # this will analyze all files in the input_files directory
     for folder in [x for x in os.listdir(os.path.join(os.getcwd(), 'test_directory')) if os.path.isdir(os.path.join(os.getcwd(), 'test_directory', x))]:
-        for file in [f for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')]:
-            try:
-                print(f'Creating GED_Repo for data in {file}')
-                g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', folder, file))
-                g.print_individuals()
-                g.print_families()
-            except ValueError as v:
-                print(v)
-            except FileNotFoundError as f:
-                print(f)
+        try:
+            print(f'Creating GED_Repo for files in {folder}')
+            g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', folder, f) for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')])
+            g.print_individuals()
+            g.print_families()
+        except ValueError as v:
+            print(v)
+        except FileNotFoundError as f:
+            print(f)
 
 
 if __name__ == '__main__':

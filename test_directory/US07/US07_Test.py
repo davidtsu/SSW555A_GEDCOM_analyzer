@@ -13,7 +13,7 @@ class Test_US07(unittest.TestCase):
     def test_set_age1(self):
         """ Tests that set_age rejects illegitimate ages by throwing a ValueError. """
         # person over 150 (failure)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US07', 'US07_Over_150.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US07', 'US07_Over_150.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.individuals['@I1@'].set_age(24)
@@ -24,7 +24,7 @@ class Test_US07(unittest.TestCase):
     def test_set_age2(self):
         """ Tests that set_age rejects illegitimate ages by throwing a ValueError. """
         # person under 150 (success)
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US07', 'US07_Under_150.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US07', 'US07_Under_150.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.check_bday()

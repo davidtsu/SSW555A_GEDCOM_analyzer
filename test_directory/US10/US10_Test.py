@@ -13,7 +13,7 @@ class Test_user_story_10(unittest.TestCase):
     def test_user_story_10(self):
         """ Tests that check_bday rejects illegitimate Marriage days by throwing a ValueError. """
 
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US10', 'US10_Marriage_Before_14.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US10', 'US10_Marriage_Before_14.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_2()

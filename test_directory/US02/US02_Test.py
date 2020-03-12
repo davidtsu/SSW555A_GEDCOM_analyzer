@@ -20,7 +20,7 @@ class Test_US02_US03(unittest.TestCase):
         # should pass, unsure how to check this
 
         # born after married
-        g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US02', 'US_02_03.ged'))
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US02', 'US_02_03.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_2()
