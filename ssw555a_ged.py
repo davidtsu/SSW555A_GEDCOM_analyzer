@@ -204,10 +204,6 @@ class GED_Repo:
         self.families[f.fid] = f
         return Family()
 
-    def a_before_b(self, a, b):
-        """ compares a to b, returns true if a occurs before b (a < b), false otherwise """
-        pass
-
     def check_bday(self):
         """ iterates through family dictionary, finding birthday issues
         1. US08 - checks birthday after marriage, before divorce
