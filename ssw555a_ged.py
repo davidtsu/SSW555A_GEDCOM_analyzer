@@ -32,9 +32,9 @@ class GED_Repo:
                 self.user_story_3()
                 self.user_story_5()
                 self.user_story_6()
+                self.user_story_35()
+                self.user_story_36()
 
-                # printing data
-                # e.g. US35 - list recent births
             else:
                 print('Bad input file.')
         except FileNotFoundError as f:
@@ -215,6 +215,7 @@ class GED_Repo:
 
     def add_individual(self, i):
         """ must pass in individual """
+
         self.individuals[i.iid] = i
         return Individual()
 
@@ -321,6 +322,7 @@ class GED_Repo:
                             print(
                                 f'{self.individuals[family.husb_id].name} married after individual death date on line {family._married_line}')
 
+
     def user_story_6(self):
         """ checks that divorce can only occur before death of both spouses """
         for family in self.families.values():
@@ -334,6 +336,24 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'{self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+
+    def user_story_35(self):
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if (individual.birthday+ relativedelta(days=30) ) > td:
+               print(
+                   f'us35-{individual.name} were born in the last 30 days on line {individual._name_line}'
+               ) 
+
+    def user_story_36(self):
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if individual.death != 'NA':
+                if (individual.death+ relativedelta(days=30) ) > td:
+                    print(
+                        f'us36-{individual.name} were died in the last 30 days on line {individual._name_line}'
+                    )
+
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
