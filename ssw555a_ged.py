@@ -374,8 +374,10 @@ class GED_Repo:
         Prints upcoming anniversaries to the user """
         if len(upcoming_anniversaries) == 0:
             print("No upcoming anniversaries.")
+            return("No upcoming anniversaries.")
         else:
             print(upcoming_anniversaries)
+            return(upcoming_anniversaries)
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
