@@ -338,7 +338,9 @@ class GED_Repo:
     def US38_print_upcoming_birthdays(self, upcoming_bdays):
         """ US38: List upcoming birthdays 
         Prints upcoming birthdays to the user """
+
         print("US38: List Upcoming Birthdays")
+        
         if len(upcoming_bdays) == 0:
             print("No upcoming birthdays.")
             return ("No upcoming birthdays.")
@@ -366,12 +368,14 @@ class GED_Repo:
                 if today < married_curr_year and married_curr_year < thirty_days:
                     upcoming_anniversaries.append((married.strftime("%m/%d/%Y"), "Husband: " + vals[4], "Wife: " + vals[6]))
 
-        print("US39: List Upcoming Anniversaries") 
         self.US39_print_upcoming_anniversaries(upcoming_anniversaries)
     
     def US39_print_upcoming_anniversaries(self, upcoming_anniversaries):
         """ US39: List upcoming anniversaries
         Prints upcoming anniversaries to the user """
+
+        print("US39: List Upcoming Anniversaries") 
+
         if len(upcoming_anniversaries) == 0:
             print("No upcoming anniversaries.")
             return("No upcoming anniversaries.")
