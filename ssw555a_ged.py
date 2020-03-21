@@ -183,7 +183,7 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise v
+            print(v)
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
     
