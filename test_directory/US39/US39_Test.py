@@ -10,13 +10,13 @@ List all living couples in a GEDCOM file whose marriage anniversaries occur in t
 
 
 import unittest
-from ssw555a_ged import GED_Repo, Individual
+from ssw555a_ged import GED_Repo, Individual, Family
 
 
 class Test_US39(unittest.TestCase):
     """ Tests that the methods that throw errors display the line number as part of the error message. """
     
-    def temp(self):
+    def test_upcoming_anniversaries(self):
         """ """
         pass
 

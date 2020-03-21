@@ -243,19 +243,61 @@ class GED_Repo:
                         raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
             
     def US38_upcoming_birthdays(self):
-        """ """
-        now = datetime.now() # current date and time
+        """ US38: List upcoming birthdays
+        List all living people in a GEDCOM file whose birthdays occur in the next 30 days
+        Prints this data to the user """
+        today = datetime.now() # current date and time
+        thirty_days = today + relativedelta(days=30) # thirty days from today
 
-        today = now.strftime("%m/%d/%Y")
-        # print("today's date:",today)
-        # self.individuals = dict()
-        # for person in self.individuals:
-            # print(person)
+        upcoming_bdays = list()
+        for person in self.individuals.values():
+            if person.death == "NA" or person.death == "NA":
+                bday = person.birthday
+                bday_curr_year = bday.replace(year=today.year)
+
+                if today < bday_curr_year and bday_curr_year < thirty_days:
+                    upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
+        
+        print("US38: List Upcoming Birthdays")
+        if len(upcoming_bdays) == 0:
+            print("No upcoming birthdays.")
+            return()
+        else:
+            print(upcoming_bdays)
+            pt = PrettyTable()
+            pt.field_names = ["Name", "Birthday"]
 
     def US39_upcoming_anniversaries(self):
-        """ """
-        # self.families = dict()
-        pass
+        """  US39: List upcoming anniversaries
+        List all living couples in a GEDCOM file whose marriage anniversaries occur in the next 30 days 
+        Prints this data to the user """
+        today = datetime.now() # current date and time
+        thirty_days = today + relativedelta(days=30) # thirty days from today
+
+        upcoming_anniversaries = list()
+
+        # [self.iid, self.name, self.gender, b, self.age, self.alive, d, self.child, self.spouse]
+
+        for family in self.families.values():
+            vals = family.get_values()
+            married = vals[1]
+            
+            if married != "NA" and married != "" and vals[6] != "NA" and vals[6] != "":
+                married = datetime.strptime(married, "%Y-%m-%d")
+                married_curr_year = married.replace(year=today.year)
+            
+                if today < married_curr_year and married_curr_year < thirty_days:
+                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y")))
+
+        print("US39: List Upcoming Anniversaries") 
+        if len(upcoming_anniversaries) == 0:
+            print("No upcoming anniversaries.")
+            return("No upcoming anniversaries.")
+        else:
+            print(upcoming_anniversaries)
+            return(upcoming_anniversaries)
+            pt = PrettyTable()
+            pt.field_names = ["Husband", "Wife", "Anniversary"]
     
     def strip_date(self, arg, line_number=0):
         """ return datetime object
@@ -284,14 +326,7 @@ class GED_Repo:
         for f in self.families.values():
             pt.add_row(f.get_values())
         print(pt)
-    
-    def US38_print_upcoming_birthdays(self):
-        """ """
-        pass
 
-    def US39_print_upcoming_anniversaries(self):
-        """ """
-        pass
 
 class Individual:
     """ stores info for a single individual """

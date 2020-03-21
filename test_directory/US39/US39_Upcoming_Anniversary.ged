@@ -1,0 +1,47 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE My Family
+1 DATE 21 MAR 2020
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Me
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Child /Lastname/
+2 GIVN Child
+2 SURN Lastname
+1 SEX M
+1 BIRT
+2 DATE 18 APR 2020
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Father /Lastname/
+2 GIVN Father
+2 SURN Lastname
+2 _MARNM Lastname
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1950
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Mother /Oldlastname/
+2 GIVN Mother
+2 SURN Oldlastname
+2 _MARNM Lastname
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1950
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I1@
+1 MARR
+2 DATE 18 APR 1990
+1 _CURRENT Y
+0 TRLR
