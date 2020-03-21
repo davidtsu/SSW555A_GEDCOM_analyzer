@@ -1,0 +1,84 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 5
+1 DATE 21 MAR 2020
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Ejona Kocibelli
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME John /Smith/
+2 GIVN John
+2 SURN Smith
+2 _MARNM Smith
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1987
+1 FAMS @F1@
+1 FAMC @F2@
+0 @I2@ INDI
+1 NAME Bill /Smith/
+2 GIVN Bill
+2 SURN Smith
+2 _MARNM Smith
+1 SEX M
+1 BIRT
+2 DATE 1 JUN 1960
+1 FAMS @F2@
+0 @I3@ INDI
+1 NAME Violet /Johnson/
+2 GIVN Violet
+2 SURN Johnson
+2 _MARNM Smith
+1 SEX M
+1 BIRT
+2 DATE 1 FEB 1960
+1 FAMS @F2@
+0 @I4@ INDI
+1 NAME Anna /Smith/
+2 GIVN Anna
+2 SURN Smith
+2 _MARNM Smith
+1 SEX F
+1 BIRT
+2 DATE 2 JAN 1990
+1 FAMS @F1@
+1 FAMC @F3@
+0 @I5@ INDI
+1 NAME Bob /Smith/
+2 GIVN Bob
+2 SURN Smith
+2 _MARNM Smith
+1 SEX F
+1 BIRT
+2 DATE 1 FEB 1960
+1 FAMS @F3@
+0 @I6@ INDI
+1 NAME Christine /Smith/
+2 GIVN Christine
+2 SURN Smith
+2 _MARNM Smith
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1960
+1 FAMS @F3@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I4@
+1 _CURRENT Y
+0 @F2@ FAM
+1 HUSB @I3@
+1 WIFE @I2@
+1 CHIL @I1@
+1 _CURRENT Y
+0 @F3@ FAM
+1 HUSB @I6@
+1 WIFE @I5@
+1 CHIL @I4@
+1 _CURRENT Y
+0 TRLR
