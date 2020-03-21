@@ -16,14 +16,19 @@ from ssw555a_ged import GED_Repo, Individual, Family
 class Test_US38(unittest.TestCase):
     """ Tests that the methods that throw errors display the line number as part of the error message. """
     
-    def test_upcoming_birthdays(self):
-        """ """
-        pass
+    def test_US38_upcoming_birthdays(self):
+        """ Tests the methods in US38_upcoming_birthdays """
+        # upcoming birthday
+        g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Upcoming_Birthdays.ged")])
+        self.assertEqual(g.US38_print_upcoming_birthdays, [('Child /Lastname/', '04/18/2020')])
 
-    def test_no_upcoming_birthdays(self):
-        """ """
-        # "No upcoming birthdays."
-        pass
+        # no upcoming birthday
+        g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_No_Upcoming_Birthdays.ged")])
+        self.assertEqual(g.US38_print_upcoming_birthdays, "No upcoming birthdays.")
+
+        # upcoming birthday, but person is dead so it does not count for this program
+        g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Dead_Upcoming_Birthdays.ged")])
+        self.assertEqual(g.US38_print_upcoming_birthdays, "No upcoming birthdays.")
 
 
 if __name__ == "__main__":

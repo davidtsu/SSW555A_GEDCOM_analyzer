@@ -320,8 +320,7 @@ class GED_Repo:
     
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays
-        List all living people in a GEDCOM file whose birthdays occur in the next 30 days
-        Prints this data to the user """
+        List all living people in a GEDCOM file whose birthdays occur in the next 30 days """
         today = datetime.now() # current date and time
         thirty_days = today + relativedelta(days=30) # thirty days from today
 
@@ -334,14 +333,18 @@ class GED_Repo:
                 if today < bday_curr_year and bday_curr_year < thirty_days:
                     upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
         
+        self.US38_print_upcoming_birthdays(upcoming_bdays)
+    
+    def US38_print_upcoming_birthdays(self, upcoming_bdays):
+        """ US38: List upcoming birthdays 
+        Prints upcoming birthdays to the user """
         print("US38: List Upcoming Birthdays")
         if len(upcoming_bdays) == 0:
             print("No upcoming birthdays.")
-            return()
+            return ("No upcoming birthdays.")
         else:
             print(upcoming_bdays)
-            pt = PrettyTable()
-            pt.field_names = ["Name", "Birthday"]
+            return(upcoming_bdays)
 
     def US39_upcoming_anniversaries(self):
         """  US39: List upcoming anniversaries
@@ -352,8 +355,6 @@ class GED_Repo:
 
         upcoming_anniversaries = list()
 
-        # [self.iid, self.name, self.gender, b, self.age, self.alive, d, self.child, self.spouse]
-
         for family in self.families.values():
             vals = family.get_values()
             married = vals[1]
@@ -363,17 +364,18 @@ class GED_Repo:
                 married_curr_year = married.replace(year=today.year)
             
                 if today < married_curr_year and married_curr_year < thirty_days:
-                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y")))
+                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y"), "Husband: " + vals[4], "Wife: " + vals[6]))
 
         print("US39: List Upcoming Anniversaries") 
+        self.US39_print_upcoming_anniversaries(upcoming_anniversaries)
+    
+    def US39_print_upcoming_anniversaries(self, upcoming_anniversaries):
+        """ US39: List upcoming anniversaries
+        Prints upcoming anniversaries to the user """
         if len(upcoming_anniversaries) == 0:
             print("No upcoming anniversaries.")
-            return("No upcoming anniversaries.")
         else:
             print(upcoming_anniversaries)
-            return(upcoming_anniversaries)
-            pt = PrettyTable()
-            pt.field_names = ["Husband", "Wife", "Anniversary"]
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
