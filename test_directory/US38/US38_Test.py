@@ -14,7 +14,7 @@ from ssw555a_ged import GED_Repo, Individual, Family
 
 
 class Test_US38(unittest.TestCase):
-    """ Tests that the methods that throw errors display the line number as part of the error message. """
+    """ Tests US38. """
     
     def test_US38_upcoming_birthdays(self):
         """ Tests the methods in US38_upcoming_birthdays """
