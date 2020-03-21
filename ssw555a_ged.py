@@ -7,12 +7,12 @@ import os, math
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
+from datetime import date
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
-    def __init__(self, in_file):
+    def __init__(self, in_folder):
         """ constructor for GED_Repo, creates list of individuals and families """
-        self.in_file = in_file
         self.individuals = dict()
         self.families = dict()
 
@@ -60,18 +60,7 @@ class GED_Repo:
                     line = line.rstrip()
 
                     if line:
-
-                        # split each line at spaces
-                        my_tuple = tuple(line.strip().split(sep, 2))
-
-                        # non_blank_lines generator removes blank lines, might not need generator with this check in place.
-                        if len(my_tuple) < 2:
-                            raise ValueError(f'Line in {ip} has too few values. Please fix and try again. GEDCOM line: {line_number}')
-
-                        # renaming for sanity
-                        level = my_tuple[0]
-                        tag = my_tuple[1]
-                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
+                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
 
                         # level and tag checking
                         if level in tags.keys():
@@ -91,38 +80,28 @@ class GED_Repo:
                                         # must read & parse next line for DOB
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_birthday(d, line_number)
                                             ind.set_alive(True, line_number)
-                                            ind.set_age(line_number)
                                     elif tag == 'DEAT':
                                         # must read & parse next line for DOD
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             ind.set_alive(False, line_number)
                                             ind.set_death(d, line_number)
-                                            ind.set_age(line_number)
-                                    else: #tag == 'DATE'
-                                        raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
+                                    elif tag == 'DATE':
+                                        print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
+                                    else: # Not sure what to do with TRLR, since it just marks EOF.
+                                        break #print(f'Reached end of {ip}')
 
                                 # check all family tags here
                                 if f_flag:
@@ -137,12 +116,7 @@ class GED_Repo:
                                     elif tag == 'MARR':
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
@@ -151,20 +125,16 @@ class GED_Repo:
                                     elif tag == 'DIV':
                                         line = next(fp_in)
                                         line_number = line_number + 1
-
-                                        my_tuple = tuple(line.strip().split(sep, 2))
-                                        level = my_tuple[0]
-                                        tag = my_tuple[1]
-                                        arg = '' if len(my_tuple) == 2 else my_tuple[2]
-
+                                        (level, tag, arg) = self.line_to_tuple(line, sep, line_number)
                                         if tag != 'DATE':
                                             raise ValueError(f'Bad value, {tag} is not DATE tag. GEDCOM line: {line_number}')
                                         else:
                                             d = self.strip_date(arg, line_number)
                                             fam.set_divorced(d, line_number)
-                                    else: # tag == DATE and tag == TRLR. Not sure what to do with TRLR, since it just marks EOF.
-                                        if tag == 'DATE':
-                                            raise ValueError(f'Unmatched DATE tag, please review {ip}. GEDCOM line: {line_number}')
+                                    elif tag == 'DATE':
+                                        print(f'Unmatched DATE tag of {tag}. GEDCOM line: {line_number}')
+                                    else: # Not sure what to do with TRLR, since it just marks EOF.
+                                        break #print(f'Reached end of {ip}')
 
                             if arg in tags[level]['SWAP']:
                                 # new individual/family starts here
@@ -196,9 +166,16 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise ValueError(f'Bad value. Please check {ip} for bad data: {v}. GEDCOM line: {line_number}')
+            raise v
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
+    
+    def line_to_tuple(self, line, sep, line_number):
+        """ reads line, returns values in input """
+        s = line.strip().split(sep, 2)
+        if len(s) < 2:
+            raise ValueError(f'Line {line_number} has too few values.')
+        return tuple((s[i] if i < len(s) else "" for i in range(3)))
 
     def add_individual(self, i):
         """ must pass in individual """
@@ -225,89 +202,32 @@ class GED_Repo:
 
                     # if child is born before marriage date, and not yet divorced
                     if marr != 'NA' and bday < marr and div == 'NA':
-                        raise ValueError(f'Individual birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
                     # if child is born more than 9 months after divorce
                     if div != 'NA' and bday > div + relativedelta(months=9):
-                        raise ValueError(f'Individual birthday before marriage on line {self.individuals[child]._birthday_line}')
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
 
                     if fam.husb_id and fam.wife_id:
                         dad = self.individuals[fam.husb_id]
                         mom = self.individuals[fam.wife_id]
                         # if child is born any time after mother dies
                         if not mom.alive and mom.death < bday:
-                            raise ValueError(f'Individual birthday after mom death date on line {self.individuals[child]._birthday_line}')
+                            print(f'US09 - {self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
                         # if child dies later than nine months after father dies
                         if not dad.alive and dad.death + relativedelta(months=9) < bday:
                             raise ValueError(f'Individual birthday after dads death date on line {self.individuals[child]._birthday_line}')
                     else:
                         raise ValueError(f'Individual does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
-            
-    def US38_upcoming_birthdays(self):
-        """ US38: List upcoming birthdays
-        List all living people in a GEDCOM file whose birthdays occur in the next 30 days
-        Prints this data to the user """
-        today = datetime.now() # current date and time
-        thirty_days = today + relativedelta(days=30) # thirty days from today
-
-        upcoming_bdays = list()
-        for person in self.individuals.values():
-            if person.death == "NA" or person.death == "NA":
-                bday = person.birthday
-                bday_curr_year = bday.replace(year=today.year)
-
-                if today < bday_curr_year and bday_curr_year < thirty_days:
-                    upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
-        
-        print("US38: List Upcoming Birthdays")
-        if len(upcoming_bdays) == 0:
-            print("No upcoming birthdays.")
-            return()
-        else:
-            print(upcoming_bdays)
-            pt = PrettyTable()
-            pt.field_names = ["Name", "Birthday"]
-
-    def US39_upcoming_anniversaries(self):
-        """  US39: List upcoming anniversaries
-        List all living couples in a GEDCOM file whose marriage anniversaries occur in the next 30 days 
-        Prints this data to the user """
-        today = datetime.now() # current date and time
-        thirty_days = today + relativedelta(days=30) # thirty days from today
-
-        upcoming_anniversaries = list()
-
-        # [self.iid, self.name, self.gender, b, self.age, self.alive, d, self.child, self.spouse]
-
-        for family in self.families.values():
-            vals = family.get_values()
-            married = vals[1]
-            
-            if married != "NA" and married != "" and vals[6] != "NA" and vals[6] != "":
-                married = datetime.strptime(married, "%Y-%m-%d")
-                married_curr_year = married.replace(year=today.year)
-            
-                if today < married_curr_year and married_curr_year < thirty_days:
-                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y")))
-
-        print("US39: List Upcoming Anniversaries") 
-        if len(upcoming_anniversaries) == 0:
-            print("No upcoming anniversaries.")
-            return("No upcoming anniversaries.")
-        else:
-            print(upcoming_anniversaries)
-            return(upcoming_anniversaries)
-            pt = PrettyTable()
-            pt.field_names = ["Husband", "Wife", "Anniversary"]
     
     def strip_date(self, arg, line_number=0):
         """ return datetime object
-        throws error if illegitimate date is received 
+        throws error if illegitimate date is received
         part of US42 """
         try:
             dt = datetime.strptime(arg, "%d %b %Y")
             return dt
         except ValueError:
-            raise ValueError(f"illegitimate date received. GEDCOM line: {line_number}")
+            raise ValueError(f"US42 - Illegitimate date of {arg}. GEDCOM line: {line_number}")
         else:
             return 'NA'
 
@@ -330,7 +250,7 @@ class GED_Repo:
 
 class Individual:
     """ stores info for a single individual """
-    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA'):
+    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA'):
         """ constructor for Individual """
         self.iid = iid              # string
         self._iid_line = 0
@@ -359,6 +279,9 @@ class Individual:
         self.spouse = spouse        # set
         self._spouse_lines = set()
 
+        self.married = married      # datetime object
+        self._married_line = 0
+
     def get_values(self):
         """ returns all values in individual as list for use in print """
         b = 'NA' if self.birthday == 'NA' or self.birthday == '' else self.birthday.strftime("%Y-%m-%d")
@@ -379,14 +302,15 @@ class Individual:
         """ sets new individual gender """
         self.gender = g
         self._gender_line = line_number
-    
+
     def set_birthday(self, b, line_number=0):
         """ sets new individual birthday """
         self.birthday = b
         self._birthday_line = line_number
+        self._age_line = line_number
 
     def set_age(self, line_number=0):
-        """ sets new individual age 
+        """ sets new individual age
         throws error if illegitimate date is received
         part of US42 """
         self._age_line = line_number
@@ -396,12 +320,14 @@ class Individual:
             self.age = math.floor((cd - bd).days / 365.2425)
         else:
             if self.death == 'NA':
-                raise f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOM line: {line_number}'
+                print(f'{self.name} is either marked alive but has death or marked dead but has no death date. GEDCOM line: {line_number}')
             else:
                 bd = self.birthday
                 dd = self.death
                 self.age = math.floor((dd - bd).days / 365.2425)
-                    
+        if self.age >= 150:
+            print(f'US07 - {self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
+
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """
         self.alive = a
@@ -411,6 +337,7 @@ class Individual:
         """ sets new individual death date """
         self.death = d
         self._death_line = line_number
+        self._age_line = line_number
 
     def set_child(self, c, line_number=0):
         """ adds child to individual's children """
@@ -420,7 +347,7 @@ class Individual:
         else:
             self.child = {c} if (c and c != 'NA') else 'NA'
             self._child_line = {line_number}
-    
+
     def set_spouse(self, s, line_number=0):
         """ sets new individual spouse """
         if isinstance(self.spouse, set):
@@ -430,9 +357,10 @@ class Individual:
             self.spouse = {s} if (s and s != 'NA') else 'NA'
             self._spouse_lines = {line_number}
 
+
 class Family:
     """ stores info for a family """
-    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA'):
+    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA', death = 'NA'):
         """ constructor for family """
         self.fid = fid                  # string
         self._fid_line = 0
@@ -458,6 +386,9 @@ class Family:
         self.children = children        # set
         self._children_lines = set()
 
+        self.death = death  # datetime object
+        self._death_line = 0
+
     def get_values(self):
         """ returns all values in family for use in print """
         m = 'NA' if self.married == 'NA' else self.married.strftime("%Y-%m-%d")
@@ -478,6 +409,11 @@ class Family:
         """ sets new family divorce date """
         self.divorced = d if d else 'NA'
         self._divorced_line = line_number
+
+    def set_death(self, d, line_number=0):
+        """ sets new family divorce date """
+        self.death = d if d else 'NA'
+        self._death_line = line_number
 
     def set_husb_id(self, h, line_number=0):
         """ sets new family husb_id """
@@ -513,16 +449,16 @@ def main():
 
     # this will analyze all files in the input_files directory
     for folder in [x for x in os.listdir(os.path.join(os.getcwd(), 'test_directory')) if os.path.isdir(os.path.join(os.getcwd(), 'test_directory', x))]:
-        for file in [f for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')]:
-            try:
-                print(f'Creating GED_Repo for data in {file}')
-                g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', folder, file))
-                g.print_individuals()
-                g.print_families()
-            except ValueError as v:
-                print(v)
-            except FileNotFoundError as f:
-                print(f)
+        try:
+            print(f'Creating GED_Repo for files in {folder}')
+            g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', folder, f) for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')])
+            g.print_individuals()
+            g.print_families()
+        except ValueError as v:
+            print(v)
+        except FileNotFoundError as f:
+            print(f)
+
 
 if __name__ == '__main__':
     main()
