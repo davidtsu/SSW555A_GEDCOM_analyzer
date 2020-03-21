@@ -20,15 +20,15 @@ class Test_US38(unittest.TestCase):
         """ Tests the methods in US38_upcoming_birthdays """
         # upcoming birthday
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Upcoming_Birthdays.ged")])
-        self.assertEqual(g.US38_print_upcoming_birthdays, [('Child /Lastname/', '04/18/2020')])
+        self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, [('Child /Lastname/', '04/18/2000')]), [('Child /Lastname/', '04/18/2000')])
 
         # no upcoming birthday
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_No_Upcoming_Birthdays.ged")])
-        self.assertEqual(g.US38_print_upcoming_birthdays, "No upcoming birthdays.")
+        self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, []), "No upcoming birthdays.")
 
         # upcoming birthday, but person is dead so it does not count for this program
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Dead_Upcoming_Birthdays.ged")])
-        self.assertEqual(g.US38_print_upcoming_birthdays, "No upcoming birthdays.")
+        self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, []), "No upcoming birthdays.")
 
 
 if __name__ == "__main__":

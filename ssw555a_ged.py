@@ -332,15 +332,13 @@ class GED_Repo:
 
                 if today < bday_curr_year and bday_curr_year < thirty_days:
                     upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
-        
-        self.US38_print_upcoming_birthdays(upcoming_bdays)
     
     def US38_print_upcoming_birthdays(self, upcoming_bdays):
         """ US38: List upcoming birthdays 
         Prints upcoming birthdays to the user """
 
         print("US38: List Upcoming Birthdays")
-        
+
         if len(upcoming_bdays) == 0:
             print("No upcoming birthdays.")
             return ("No upcoming birthdays.")
@@ -350,8 +348,7 @@ class GED_Repo:
 
     def US39_upcoming_anniversaries(self):
         """  US39: List upcoming anniversaries
-        List all living couples in a GEDCOM file whose marriage anniversaries occur in the next 30 days 
-        Prints this data to the user """
+        List all living couples in a GEDCOM file whose marriage anniversaries occur in the next 30 days """
         today = datetime.now() # current date and time
         thirty_days = today + relativedelta(days=30) # thirty days from today
 
