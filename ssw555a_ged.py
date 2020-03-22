@@ -296,18 +296,10 @@ class GED_Repo:
         """ Marriage should occur before divorce of spouses, and divorce can only occur after marriage """
         for family in self.families.values():
             if family.married != 'NA':
-                if family.wife_id != 'NA':
-                    if self.individuals[family.wife_id].divorced != 'NA':
-                        if self.individuals[family.wife_id].divorced < family.married:
-                            print(
-                                f'US04 - {self.individuals[family.wife_id].name} married after divorce of spouse on line {family._married_line}')
-
-                if family.husb_id != 'NA':
-                    if self.individuals[family.husb_id].divorced != 'NA':
-                        if self.individuals[family.husb_id].divorced < family.married:
-                            print(
-                                f'US04 - {self.individuals[family.husb_id].name} married after divorce of spouse on line {family._married_line}')
-        
+                if family.wife_id != 'NA' and family.husb_id != 'NA' and family.divorced != 'NA':
+                    if family.divorced < family.married:
+                        print(
+                            f'US04 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} married after divorce on line {family._married_line}')
 
     def user_story_5(self):
         """ checks that marriage should occur before death of either spouse """
