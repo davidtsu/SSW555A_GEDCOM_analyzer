@@ -37,6 +37,7 @@ class GED_Repo:
             self.user_story_3()     # US03
             self.user_story_5()     # US05
             self.user_story_6()     # US06
+            self.US29_list_deceased()
             self.US38_upcoming_birthdays()
             self.US39_upcoming_anniversaries()
 
@@ -317,6 +318,25 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+    
+    def US29_list_deceased(self):
+        """ US29: List deceased
+        List all deceased individuals in a GEDCOM file """
+        deceased = list()
+        for person in self.individuals.values():
+            if person.alive == False:
+                deceased.append(person.name)
+
+    def US29_print_deceased(self, deceased):
+        """ US29: List deceased
+        Prints a list of deceased individuals to the user. """
+        print("US29: List deceased")
+        if len(deceased) == 0:
+            print("No deceased.")
+            return("No deceased.")
+        else:
+            print(deceased)
+            return deceased
     
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays

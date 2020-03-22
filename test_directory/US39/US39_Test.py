@@ -17,7 +17,7 @@ class Test_US39(unittest.TestCase):
     """ Tests US39. """
     
     def test_US39_upcoming_anniversaries(self):
-        """ Tests the methods in US39_upcoming_anniversaries """
+        """ Tests US39. """
         # upcoming anniversary
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US39", "US39_Upcoming_Anniversaries.ged")])
         self.assertEqual(GED_Repo.US39_print_upcoming_anniversaries(self, [('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/'), ('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/'), ('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/')]), [('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/'), ('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/'), ('04/18/1990', 'Husband: Father /Lastname/', 'Wife: Mother /Oldlastname/')])
