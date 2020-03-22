@@ -37,6 +37,7 @@ class GED_Repo:
             self.user_story_3()     # US03
             self.user_story_5()     # US05
             self.user_story_6()     # US06
+            self.user_story_21()
 
             # printing data
             # e.g. US35 - list recent births
@@ -278,6 +279,20 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
+    def user_story_21(self): 
+        for family in self.families.values():
+            if family.married != 'NA':
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].gender != 'NA':
+                        if self.individuals[family.husb_id].gender != 'M':
+                            print(
+                            f'US21 - {self.individuals[family.husb_id].name} gender not male on line {self.individuals[family.husb_id]._gender_line}')
+
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].gender != 'NA':
+                        if self.individuals[family.wife_id].gender != 'F':
+                            print(
+                                f'US21 - {self.individuals[family.wife_id].name} gender not female on line {self.individuals[family.husb_id]._gender_line}')
 
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
@@ -315,7 +330,7 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
-
+    
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
