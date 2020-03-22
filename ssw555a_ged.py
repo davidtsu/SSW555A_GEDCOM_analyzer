@@ -197,11 +197,15 @@ class GED_Repo:
 
     def add_individual(self, i):
         """ must pass in individual """
+        # if self.individuals[i.iid] in self.individuals.values():
+        #     print("This id exist!")
         self.individuals[i.iid] = i
         return Individual()
 
     def add_family(self, f):
         """ must pass in family """
+        # if self.individuals[f.fid] in self.families.values():
+        #     print("This id exist!")
         self.families[f.fid] = f
         return Family()
 
@@ -280,20 +284,27 @@ class GED_Repo:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
     def user_story_21(self): 
-        for family in self.families.values():
+        
+        for family in self.families.values():    
             if family.married != 'NA':
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].gender != 'NA':
+                        # print(self.individuals[family.husb_id].iid, self.individuals[family.husb_id].name, self.individuals[family.husb_id].gender)
+                        # print(len(self.individuals[family.husb_id].gender), self.individuals[family.husb_id].gender)
+                        
                         if self.individuals[family.husb_id].gender != 'M':
+                            # print("EJONA")
                             print(
                             f'US21 - {self.individuals[family.husb_id].name} gender not male on line {self.individuals[family.husb_id]._gender_line}')
 
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].gender != 'NA':
-                        if self.individuals[family.wife_id].gender != 'F':
+                        # print(self.individuals[family.wife_id].gender)
+                        if self.individuals[family.wife_id].gender != 'F': 
                             print(
                                 f'US21 - {self.individuals[family.wife_id].name} gender not female on line {self.individuals[family.husb_id]._gender_line}')
 
+        
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
@@ -356,7 +367,7 @@ class GED_Repo:
         for i in self.individuals.values():
             pt.add_row(i.get_values())
         print(pt)
-
+    
     def print_families(self):
         """ prints list of families using prettytable """
         pt = PrettyTable()
