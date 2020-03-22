@@ -300,6 +300,15 @@ class GED_Repo:
                     if family.divorced < family.married:
                         print(
                             f'US04 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} married after divorce on line {family._married_line}')
+                    # if self.individuals[family.wife_id].divorced != 'NA':
+                    #     if self.individuals[family.wife_id].divorced < family.married:
+                            
+
+                # if family.husb_id != 'NA':
+                #     if self.individuals[family.husb_id].divorced != 'NA':
+                #         if self.individuals[family.husb_id].divorced < family.married:
+                #             print(
+                #                 f'US04 - {self.individuals[family.husb_id].name} married after divorce of spouse on line {family._married_line}')
 
     def user_story_5(self):
         """ checks that marriage should occur before death of either spouse """
@@ -336,7 +345,8 @@ class GED_Repo:
         for family in self.families.values():
             if len(family.children) >= 15:
                 family_list.append(family.fam_id)
-                print(f"US15 - Family has {len(family.children)} children on line {self.families[family.children]._birthday_line}")
+                # print(f"US15 - Family has {len(family.children)} children on line {self.families[family.children]._birthday_line}")
+                print(f"US15 - Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
     
     def set_ages(self):
         """ sets ages of individuals in individual_table """
