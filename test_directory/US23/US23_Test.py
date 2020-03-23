@@ -18,19 +18,24 @@ class Test_US23(unittest.TestCase):
     
     def test_US23_unique_name_and_birthdate(self):
         """ Tests US23. """
-        # USE ASSERTRAISES, US 40 OR 42 FOR REFERENCE?
+        self.maxDiff = None
+        # no duplicate name and birthdate
+        g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US23", "US23_Unique_Name_and_Birthdate.ged")])
+        capturedOutput = io.StringIO()
+        sys.stdout = capturedOutput
+        g.US23_unique_name_and_birthdate()
+        sys.stdout = sys.__stdout__
+        output_str1 = "US23: Unique Name and Birthdate\nUS23: All individuals have unique names and birthdates.\n"
+        self.assertEqual(capturedOutput.getvalue(), output_str1)
         
-        # upcoming birthday
-        # g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Upcoming_Birthdays.ged")])
-        # self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, [('Child /Lastname/', '04/18/2000')]), [('Child /Lastname/', '04/18/2000')])
-
-        # no upcoming birthday
-        # g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_No_Upcoming_Birthdays.ged")])
-        # self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, []), "No upcoming birthdays.")
-
-        # upcoming birthday, but person is dead so it does not count for this program
-        # g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Dead_Upcoming_Birthdays.ged")])
-        # self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, []), "No upcoming birthdays.")
+        # duplicate name and birthdate
+        g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US23", "US23_Duplicate_Name_and_Birthdate.ged")])
+        capturedOutput = io.StringIO()
+        sys.stdout = capturedOutput
+        g.US23_unique_name_and_birthdate()
+        sys.stdout = sys.__stdout__
+        output_str1 = "US23: Unique Name and Birthdate\nUS23: Two people with the same name and birthdate: ('Firstname /Lastname/', '01/01/1950') on GEDCOM line: 9 and ('Firstname /Lastname/', '01/01/1950') on GEDCOM line 15.\n"        
+        self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 
 if __name__ == "__main__":

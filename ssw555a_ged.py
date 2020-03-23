@@ -27,6 +27,8 @@ class GED_Repo:
                     # finish calculating data
                     self.set_ages()
 
+                    self.US23_unique_name_and_birthdate() # this must be done for EVERY GEDCOM file
+
                 else:
                     print('Bad input file.')
 
@@ -319,6 +321,31 @@ class GED_Repo:
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
     
+    def US23_unique_name_and_birthdate(self):
+        """ US23: Unique name and birth date
+        No more than one individual with the same name and birth date should appear in a GEDCOM file
+        Throws an error if there are two people with the same name and birthdate """
+
+        print("US23: Unique Name and Birthdate")
+        unique = True
+        unique_list = list() # list structure - [ (person, birthday), line, (person, birthday), line ]
+
+        for person in self.individuals.values():
+            name = person.name
+            bday = person.birthday.strftime("%m/%d/%Y")
+            line = person._name_line
+            p = (name, bday)
+            if p in unique_list:
+                duplicate_index = unique_list.index(p)
+                duplicate_line = unique_list[duplicate_index + 1]
+                print(f"US23: Two people with the same name and birthdate: {p} on GEDCOM line: {duplicate_line} and {p} on GEDCOM line {line}.")
+                unique = False
+            else:
+                unique_list.append(p)
+                unique_list.append(line)
+        if unique == True:
+            print("US23: All individuals have unique names and birthdates.")
+
     def US29_list_deceased(self):
         """ US29: List deceased
         List all deceased individuals in a GEDCOM file """
@@ -352,6 +379,8 @@ class GED_Repo:
 
                 if today < bday_curr_year and bday_curr_year < thirty_days:
                     upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
+        
+        self.US38_print_upcoming_birthdays(upcoming_bdays)
     
     def US38_print_upcoming_birthdays(self, upcoming_bdays):
         """ US38: List upcoming birthdays 
