@@ -17,7 +17,7 @@ class Test_US22(unittest.TestCase):
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         # g.add_family()
-        g.add_individual 
+        g.add_individual() 
         sys.stdout = sys.__stdout__
         output_str1 = 'US22 - @I1-US22-A@ id has a duplicate in line number 12\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
