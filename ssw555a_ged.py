@@ -196,16 +196,20 @@ class GED_Repo:
         return tuple((s[i] if i < len(s) else "" for i in range(3)))
 
     def add_individual(self, i):
-        """ must pass in individual """
-        # if self.individuals[i.iid] in self.individuals.values():
-        #     print("This id exist!")
+        """ must pass in individual 
+        US22: checks if the individual ids are unique
+        """
+        if i.iid in self.individuals.keys():
+            print(f'US22 - {i.iid} id has a duplicate in line number {i._iid_line}')
         self.individuals[i.iid] = i
         return Individual()
 
     def add_family(self, f):
-        """ must pass in family """
-        # if self.individuals[f.fid] in self.families.values():
-        #     print("This id exist!")
+        """ must pass in family 
+        US22: checks if the family ids are unique
+        """
+        if f.fid in self.families.keys():
+            print(f'US22 - {f.fid} id has a duplicate in line number {f._fid_line}')
         self.families[f.fid] = f
         return Family()
 
@@ -283,28 +287,22 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
-    def user_story_21(self): 
-        
+    def user_story_21(self):   
+        """US21: checks the correct gender of husband and wife"""   
         for family in self.families.values():    
             if family.married != 'NA':
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].gender != 'NA':
-                        # print(self.individuals[family.husb_id].iid, self.individuals[family.husb_id].name, self.individuals[family.husb_id].gender)
-                        # print(len(self.individuals[family.husb_id].gender), self.individuals[family.husb_id].gender)
-                        
                         if self.individuals[family.husb_id].gender != 'M':
-                            # print("EJONA")
                             print(
-                            f'US21 - {self.individuals[family.husb_id].name} gender not male on line {self.individuals[family.husb_id]._gender_line}')
+                            f'US21 - {self.individuals[family.husb_id].name} gender is supposed to be male but is not on line {self.individuals[family.husb_id]._gender_line}')
 
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].gender != 'NA':
-                        # print(self.individuals[family.wife_id].gender)
                         if self.individuals[family.wife_id].gender != 'F': 
                             print(
-                                f'US21 - {self.individuals[family.wife_id].name} gender not female on line {self.individuals[family.husb_id]._gender_line}')
-
-        
+                                f'US21 - {self.individuals[family.wife_id].name} gender is supposed to be female but is not on line {self.individuals[family.husb_id]._gender_line}')
+      
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
