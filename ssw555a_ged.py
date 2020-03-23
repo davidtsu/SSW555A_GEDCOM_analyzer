@@ -461,7 +461,6 @@ class GED_Repo:
             print(upcoming_anniversaries)
             return(upcoming_anniversaries)
 
-
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
