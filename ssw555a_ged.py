@@ -37,11 +37,13 @@ class GED_Repo:
             self.user_story_01()    # US01
             self.user_story_2()     # US02 and US10
             self.user_story_3()     # US03
+            self.user_story_4()     # US04
             self.user_story_5()     # US05
             self.user_story_6()     # US06
-            self.US29_list_deceased()
+            self.user_story_15()    # US 15
 
             # printing data
+            self.US29_list_deceased()
             self.user_story_35()
             self.user_story_36()
             self.US38_upcoming_birthdays()
@@ -291,7 +293,16 @@ class GED_Repo:
             if person.birthday != 'NA' and person.death != 'NA':
                 if person.birthday > person.death:
                     print(f'US03 - {person.name} birthday after death date on line {person._birthday_line}')
-                    
+
+    def user_story_4(self):
+        """ Marriage should occur before divorce of spouses, and divorce can only occur after marriage """
+        for family in self.families.values():
+            if family.married != 'NA':
+                if family.wife_id != 'NA' and family.husb_id != 'NA' and family.divorced != 'NA':
+                    if family.divorced < family.married:
+                        print(
+                            f'US04 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} married after divorce on line {family._married_line}')
+
     def user_story_5(self):
         """ checks that marriage should occur before death of either spouse """
         for family in self.families.values():
@@ -321,6 +332,11 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+
+    def user_story_15(self):
+        for family in self.families.values():
+                if len(family.children) >= 15:
+                    print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
 
     def user_story_35(self):
         ''' US35 - prints list of individuals born in the last 30 days '''
@@ -445,11 +461,11 @@ class GED_Repo:
             print(upcoming_anniversaries)
             return(upcoming_anniversaries)
 
+
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
             i.set_age(i._age_line)
-
 
     def strip_date(self, arg, line_number=0):
         """ return datetime object
@@ -482,7 +498,7 @@ class GED_Repo:
 
 class Individual:
     """ stores info for a single individual """
-    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA'):
+    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA', divorced = 'NA'):
         """ constructor for Individual """
         self.iid = iid              # string
         self._iid_line = 0
@@ -513,6 +529,9 @@ class Individual:
 
         self.married = married      # datetime object
         self._married_line = 0
+
+        self.divorced = divorced    # datetime object
+        self._divorced_line = 0
 
     def get_values(self):
         """ returns all values in individual as list for use in print """
@@ -592,7 +611,7 @@ class Individual:
 
 class Family:
     """ stores info for a family """
-    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '', wife_id = '', wife_name = '', children = 'NA', death = 'NA'):
+    def __init__(self, fid = '', married = 'NA', divorced = 'NA', husb_id = '', husb_name = '',fam_id = '', wife_id = '', wife_name = '', children = 'NA', death = 'NA'):
         """ constructor for family """
         self.fid = fid                  # string
         self._fid_line = 0
@@ -608,6 +627,9 @@ class Family:
 
         self.husb_name = husb_name      # string
         self._husb_name_line = 0
+
+        self.fam_id = fam_id            # string
+        self._fam_id_line = 0
 
         self.wife_id = wife_id          # string
         self._wife_id_line = 0
