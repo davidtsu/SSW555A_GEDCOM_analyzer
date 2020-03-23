@@ -334,7 +334,7 @@ class GED_Repo:
     def user_story_15(self):
         for family in self.families.values():
                 if len(family.children) >= 15:
-                    print(f"US15 - Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+                    print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
