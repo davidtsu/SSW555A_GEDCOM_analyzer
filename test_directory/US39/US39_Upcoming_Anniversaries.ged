@@ -9,21 +9,15 @@
 1 FAMC @F1@-US39-A@
 0 @I2@-US39-A@ INDI
 1 NAME Father /Lastname/
-2 GIVN Father
-2 SURN Lastname
-2 _MARNM Lastname
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1950
 1 FAMS @F1@-US39-A@
 0 @I3@-US39-A@ INDI
-1 NAME Mother /Oldlastname/
-2 GIVN Mother
-2 SURN Oldlastname
-2 _MARNM Lastname
+1 NAME Mother /Lastname/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1950
+2 DATE 20 JAN 1950
 1 FAMS @F1@-US39-A@
 0 @F1@-US39-A@ FAM
 1 HUSB @I2@-US39-A@

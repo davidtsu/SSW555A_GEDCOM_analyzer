@@ -14,10 +14,10 @@ from ssw555a_ged import GED_Repo, Individual, Family
 
 
 class Test_US38(unittest.TestCase):
-    """ Tests US38. """
+    """ Tests US38. Ensures that upcoming birthdays are printed to the user. """
     
     def test_US38_upcoming_birthdays(self):
-        """ Tests the methods in US38_upcoming_birthdays """
+        """ Tests US38. Ensures that upcoming birthdays are printed to the user. """
         # upcoming birthday
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US38", "US38_Upcoming_Birthdays.ged")])
         self.assertEqual(GED_Repo.US38_print_upcoming_birthdays(self, [('Child /Lastname/', '04/18/2000')]), [('Child /Lastname/', '04/18/2000')])
