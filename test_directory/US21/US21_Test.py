@@ -1,7 +1,7 @@
 """
 User Story 21 (US21) - Test File
 US21: Correct gender test cases
-@Author: David Tsu, Zephyr Zambrano, Xiaojun Zhu
+@Author: Ejona Kocibelli
 """
 
 import unittest, os, io, sys
@@ -11,9 +11,8 @@ class Test_US21(unittest.TestCase):
     """ Tests that husbands have a male and wives have a female gender. """
 
     def test_user_story_21(self):
-        """ Tests that set_age rejects illegitimate ages by throwing a ValueError. """
-        # husband gender female and wife gender male (failure)
-        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US21', 'correct_gender_test.ged')])
+        """ Tests that husband gender is male and wife gender female and prints out the cases if not"""
+        g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US21', 'US21_correct_gender_test.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
         g.user_story_21()
