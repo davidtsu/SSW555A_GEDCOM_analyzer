@@ -40,11 +40,12 @@ class GED_Repo:
             self.user_story_5()     # US05
             self.user_story_6()     # US06
             self.US29_list_deceased()
-            self.US38_upcoming_birthdays()
-            self.US39_upcoming_anniversaries()
 
             # printing data
-            # e.g. US35 - list recent births
+            self.user_story_35()
+            self.user_story_36()
+            self.US38_upcoming_birthdays()
+            self.US39_upcoming_anniversaries()
 
         except FileNotFoundError as f:
             raise f
@@ -188,7 +189,7 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise v
+            print(v)
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
     
@@ -320,6 +321,21 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
+
+    def user_story_35(self):
+        ''' US35 - prints list of individuals born in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if (individual.birthday + relativedelta(days=30) ) > td:
+               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}') 
+
+    def user_story_36(self):
+        ''' US36 - prints list of individuals who died in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if individual.death != 'NA':
+                if (individual.death + relativedelta(days=30) ) > td:
+                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
     
     def US23_unique_name_and_birthdate(self):
         """ US23: Unique name and birth date
