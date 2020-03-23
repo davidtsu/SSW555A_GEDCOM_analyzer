@@ -17,7 +17,7 @@ class Test_US21(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_21()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US21 - Bella /Smith/ gender is supposed to be female but is not on line 35\n'
+        output_str1 = 'US21 - Bella /Smith1/ gender is supposed to be female but is not on line 35\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 

@@ -16,7 +16,7 @@ class Test_US15(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_15()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US15 - Bette /Mann/ and Zepheniah /Mann/ Family has 21 children on line 260\n'
+        output_str1 = 'US15 - Bette /Mann5/ and Zepheniah /Mann5/ Family has 21 children on line 260\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 

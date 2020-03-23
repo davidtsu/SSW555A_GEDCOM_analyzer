@@ -20,7 +20,7 @@ class Test_US36(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_36()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US36 - Jaf /Jo/ were died in the last 30 days on line 15\n'
+        output_str1 = 'US36 - Jaf /Jo7/ were died in the last 30 days on line 15\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 if __name__ == "__main__":

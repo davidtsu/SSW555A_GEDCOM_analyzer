@@ -20,7 +20,7 @@ class Test_user_story_01(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_01()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US01 - Jaf /Jo/ birthday after today on line 21\n'
+        output_str1 = 'US01 - Jaf /Jo1/ birthday after today on line 21\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_check_user_story_01_2(self):
@@ -31,7 +31,7 @@ class Test_user_story_01(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_01()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US01 - Jaf /Jo/ death after today on line 23\n'
+        output_str1 = 'US01 - Jaf /Jo2/ death after today on line 23\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_check_user_story_01_3(self):
@@ -42,7 +42,7 @@ class Test_user_story_01(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_01()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US01 - Jaf /Jo/ marriage after today on line 37\n'
+        output_str1 = 'US01 - Jaf /Jo4/ marriage after today on line 37\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
     def test_check_user_story_01_4(self):
@@ -53,7 +53,7 @@ class Test_user_story_01(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_01()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US01 - Jim /Jo/ divorce after today on line 39\n'
+        output_str1 = 'US01 - Jim /Jo3/ divorce after today on line 39\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 if __name__ == "__main__":
