@@ -1,0 +1,22 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 4
+1 DATE 21 MAR 2020
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1-US35-A@
+2 NAME xiaojun zhu
+1 SUBN
+1 CHAR UTF-8
+0 @I1-US35-A@ INDI
+1 NAME Emith /Ohou/
+2 GIVN Emith
+2 SURN Ohou
+2 _MARNM Ohou
+1 SEX F
+1 BIRT
+2 DATE 10 MAR 2020
+0 TRLR

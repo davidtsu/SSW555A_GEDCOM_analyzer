@@ -27,6 +27,8 @@ class GED_Repo:
                     # finish calculating data
                     self.set_ages()
 
+                    self.US23_unique_name_and_birthdate() # this must be done for EVERY GEDCOM file
+
                 else:
                     print('Bad input file.')
 
@@ -41,7 +43,11 @@ class GED_Repo:
             self.user_story_15()    # US 15
 
             # printing data
-            # e.g. US35 - list recent births
+            self.US29_list_deceased()
+            self.user_story_35()
+            self.user_story_36()
+            self.US38_upcoming_birthdays()
+            self.US39_upcoming_anniversaries()
 
         except FileNotFoundError as f:
             raise f
@@ -185,7 +191,7 @@ class GED_Repo:
 
         # raise error if bad files.
         except ValueError as v:
-            raise v
+            print(v)
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
     
@@ -205,10 +211,6 @@ class GED_Repo:
         """ must pass in family """
         self.families[f.fid] = f
         return Family()
-
-    def a_before_b(self, a, b):
-        """ compares a to b, returns true if a occurs before b (a < b), false otherwise """
-        pass
 
     def check_bday(self):
         """ iterates through family dictionary, finding birthday issues
@@ -335,6 +337,130 @@ class GED_Repo:
         for family in self.families.values():
                 if len(family.children) >= 15:
                     print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+
+    def user_story_35(self):
+        ''' US35 - prints list of individuals born in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if (individual.birthday + relativedelta(days=30) ) > td:
+               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}') 
+
+    def user_story_36(self):
+        ''' US36 - prints list of individuals who died in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if individual.death != 'NA':
+                if (individual.death + relativedelta(days=30) ) > td:
+                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
+    
+    def US23_unique_name_and_birthdate(self):
+        """ US23: Unique name and birth date
+        No more than one individual with the same name and birth date should appear in a GEDCOM file
+        Throws an error if there are two people with the same name and birthdate """
+
+        print("US23: Unique Name and Birthdate")
+        unique = True
+        unique_list = list() # list structure - [ (person, birthday), line, (person, birthday), line ]
+
+        for person in self.individuals.values():
+            name = person.name
+            bday = person.birthday.strftime("%m/%d/%Y")
+            line = person._name_line
+            p = (name, bday)
+            if p in unique_list:
+                duplicate_index = unique_list.index(p)
+                duplicate_line = unique_list[duplicate_index + 1]
+                print(f"US23: Two people with the same name and birthdate: {p} on GEDCOM line: {duplicate_line} and {p} on GEDCOM line {line}.")
+                unique = False
+            else:
+                unique_list.append(p)
+                unique_list.append(line)
+        if unique == True:
+            print("US23: All individuals have unique names and birthdates.")
+
+    def US29_list_deceased(self):
+        """ US29: List deceased
+        List all deceased individuals in a GEDCOM file """
+        deceased = list()
+        for person in self.individuals.values():
+            if person.alive == False:
+                deceased.append(person.name)
+
+    def US29_print_deceased(self, deceased):
+        """ US29: List deceased
+        Prints a list of deceased individuals to the user. """
+        print("US29: List deceased")
+        if len(deceased) == 0:
+            print("No deceased.")
+            return("No deceased.")
+        else:
+            print(deceased)
+            return deceased
+    
+    def US38_upcoming_birthdays(self):
+        """ US38: List upcoming birthdays
+        List all living people in a GEDCOM file whose birthdays occur in the next 30 days """
+        today = datetime.now() # current date and time
+        thirty_days = today + relativedelta(days=30) # thirty days from today
+
+        upcoming_bdays = list()
+        for person in self.individuals.values():
+            if person.death == "NA" or person.death == "NA":
+                bday = person.birthday
+                bday_curr_year = bday.replace(year=today.year)
+
+                if today < bday_curr_year and bday_curr_year < thirty_days:
+                    upcoming_bdays.append((person.name, bday.strftime("%m/%d/%Y")))
+        
+        self.US38_print_upcoming_birthdays(upcoming_bdays)
+    
+    def US38_print_upcoming_birthdays(self, upcoming_bdays):
+        """ US38: List upcoming birthdays 
+        Prints upcoming birthdays to the user """
+
+        print("US38: List Upcoming Birthdays")
+
+        if len(upcoming_bdays) == 0:
+            print("No upcoming birthdays.")
+            return ("No upcoming birthdays.")
+        else:
+            print(upcoming_bdays)
+            return(upcoming_bdays)
+
+    def US39_upcoming_anniversaries(self):
+        """  US39: List upcoming anniversaries
+        List all living couples in a GEDCOM file whose marriage anniversaries occur in the next 30 days """
+        today = datetime.now() # current date and time
+        thirty_days = today + relativedelta(days=30) # thirty days from today
+
+        upcoming_anniversaries = list()
+
+        for family in self.families.values():
+            vals = family.get_values()
+            married = vals[1]
+            
+            if married != "NA" and married != "" and vals[6] != "NA" and vals[6] != "":
+                married = datetime.strptime(married, "%Y-%m-%d")
+                married_curr_year = married.replace(year=today.year)
+            
+                if today < married_curr_year and married_curr_year < thirty_days:
+                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y"), "Husband: " + vals[4], "Wife: " + vals[6]))
+
+        self.US39_print_upcoming_anniversaries(upcoming_anniversaries)
+    
+    def US39_print_upcoming_anniversaries(self, upcoming_anniversaries):
+        """ US39: List upcoming anniversaries
+        Prints upcoming anniversaries to the user """
+
+        print("US39: List Upcoming Anniversaries") 
+
+        if len(upcoming_anniversaries) == 0:
+            print("No upcoming anniversaries.")
+            return("No upcoming anniversaries.")
+        else:
+            print(upcoming_anniversaries)
+            return(upcoming_anniversaries)
+
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
