@@ -1,56 +1,56 @@
 0 HEAD
 0 @I1-US22-A@ INDI
-1 NAME Bella /Smith/
+1 NAME Bella /Smith2/
 2 GIVN Bella
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith2
+2 _MARNM Smith2
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1996
 1 FAMS @F1-US22-A@
 1 FAMS @F1-US22-A@
 0 @I1-US22-A@ INDI
-1 NAME Bob /Smith/
+1 NAME Bob /Smith2/
 2 GIVN Bob
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith2
+2 _MARNM Smith2
 1 SEX M
 1 BIRT
 2 DATE 2 JAN 1970
 1 FAMS @F2-US22-A@
 0 @I3-US22-A@ INDI
-1 NAME Anna /Johnson/
+1 NAME Anna /Johnson2/
 2 GIVN Anna
-2 SURN Johnson
-2 _MARNM Smith
+2 SURN Johnson2
+2 _MARNM Smith2
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1970
 1 FAMS @F2-US22-A@
 0 @I4-US22-A@ INDI
-1 NAME John /Johnson/
+1 NAME John /Johnson2/
 2 GIVN John
-2 SURN Johnson
-2 _MARNM Johnson
+2 SURN Johnson2
+2 _MARNM Johnson2
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1996
 1 FAMS @F1-US22-A@
 1 FAMS @F1-US22-A@
 0 @I5-US22-A@ INDI
-1 NAME Bill /Johnson/
+1 NAME Bill /Johnson2/
 2 GIVN Bill
-2 SURN Johnson
-2 _MARNM Johnson
+2 SURN Johnson2
+2 _MARNM Johnson2
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1960
 1 FAMS @F3-US22-A@
 0 @I6-US22-A@ INDI
-1 NAME Anna /Johnson/
+1 NAME Anna /Johnson2/
 2 GIVN Anna
-2 SURN Johnson
-2 _MARNM Johnson
+2 SURN Johnson2
+2 _MARNM Johnson2
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1960

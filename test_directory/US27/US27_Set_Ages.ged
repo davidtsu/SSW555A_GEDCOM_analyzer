@@ -1,6 +1,6 @@
 0 HEAD
 0 @I1-US27-A@ INDI
-1 NAME Jimmy /John/
+1 NAME Jimmy /John1/
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1980
@@ -8,7 +8,7 @@
 2 DATE 31 DEC 2015
 1 FAMS @F1-US27-A@
 0 @I2-US27-A@ INDI
-1 NAME Jodie /John/
+1 NAME Jodie /John1/
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1980
