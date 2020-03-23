@@ -12,28 +12,28 @@
 1 SUBN
 1 CHAR UTF-8
 0 @I1-US08-D@ INDI
-1 NAME Ben /Smith/
+1 NAME Ben /Smith9/
 2 GIVN Ben
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith9
+2 _MARNM Smith9
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1980
 1 FAMS @F1-US08-D@
 0 @I2-US08-D@ INDI
-1 NAME Abby /Smith/
+1 NAME Abby /Smith9/
 2 GIVN Abby
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith9
+2 _MARNM Smith9
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1980
 1 FAMS @F1-US08-D@
 0 @I3-US08-D@ INDI
-1 NAME Jim /Smith/
+1 NAME Jim /Smith9/
 2 GIVN Jim
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith9
+2 _MARNM Smith9
 1 SEX M
 1 BIRT
 2 DATE 2 FEB 1999

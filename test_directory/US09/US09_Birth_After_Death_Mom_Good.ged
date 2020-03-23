@@ -12,28 +12,28 @@
 1 SUBN
 1 CHAR UTF-8
 0 @I1-US09-D@ INDI
-1 NAME Jimmy /John/
+1 NAME Jimmy /John_4/
 2 GIVN Jimmy
-2 SURN John
-2 _MARNM John
+2 SURN John_4
+2 _MARNM John_4
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 2000
 1 FAMC @F1-US09-D@
 0 @I2-US09-D@ INDI
-1 NAME Johnny /John/
-2 GIVN Johnny
-2 SURN John
-2 _MARNM John
+1 NAME John_4ny /John_4/
+2 GIVN John_4ny
+2 SURN John_4
+2 _MARNM John_4
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1980
 1 FAMS @F1-US09-D@
 0 @I3-US09-D@ INDI
-1 NAME Jamie /John/
+1 NAME Jamie /John_4/
 2 GIVN Jamie
-2 SURN John
-2 _MARNM John
+2 SURN John_4
+2 _MARNM John_4
 1 SEX F
 1 BIRT
 2 DATE 1 JAN 1980

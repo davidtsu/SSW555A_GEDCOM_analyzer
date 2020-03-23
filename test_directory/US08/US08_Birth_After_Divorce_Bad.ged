@@ -12,28 +12,28 @@
 1 SUBN
 1 CHAR UTF-8
 0 @I1-US08-A@ INDI
-1 NAME John /Smith/
+1 NAME John /Smith6/
 2 GIVN John
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith6
+2 _MARNM Smith6
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 2000
 1 FAMC @F1-US08-A@
 0 @I2-US08-A@ INDI
-1 NAME Tanner /Smith/
+1 NAME Tanner /Smith6/
 2 GIVN Tanner
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smith6
+2 _MARNM Smith6
 1 SEX M
 1 BIRT
 2 DATE 3 MAR 1970
 1 FAMS @F1-US08-A@
 0 @I3-US08-A@ INDI
-1 NAME Sally /Hall/
+1 NAME Sally /Hall6/
 2 GIVN Sally
-2 SURN Hall
-2 _MARNM Hall
+2 SURN Hall6
+2 _MARNM Hall6
 1 SEX F
 1 BIRT
 2 DATE 2 FEB 1970
