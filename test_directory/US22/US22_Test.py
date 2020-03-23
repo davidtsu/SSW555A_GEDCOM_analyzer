@@ -16,10 +16,20 @@ class Test_US22(unittest.TestCase):
         g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US22', 'unique_ids_test.ged')])
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
-        # g.add_family()
-        g.add_individual() 
+      
+        for i in g.individuals.values():
+            g.add_individual(i) 
+            break
+        
         sys.stdout = sys.__stdout__
+        
         output_str1 = 'US22 - @I1-US22-A@ id has a duplicate in line number 12\n'
+        
+        # output_str1 = ['US22 - @I1-US22-A@ id has a duplicate in line number 12\n', 'US22 - @I3-US22-A@ id has a duplicate in line number 21\n', 'US22 - @I3-US22-A@ id has a duplicate in line number 21',
+        #         'US22 - @I4-US22-A@ id has a duplicate in line number 30\n', 'US22 - @I5-US22-A@ id has a duplicate in line number 40\n',
+        #         'US22 - @I6-US22-A@ id has a duplicate in line number 49\n']
+
+        
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 
