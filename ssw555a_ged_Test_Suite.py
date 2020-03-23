@@ -8,7 +8,7 @@ suite = loader.discover(start_dir, pattern='US*_Test.py')
 runner = unittest.TextTestRunner()
 runner.run(suite)
 
-# removes all the .cpy files that show up every time this is run.
+# removes most of the .cpy files that show up every time this is run.
 
 for folder in [x for x in os.listdir(os.path.join(os.getcwd(), 'test_directory')) if os.path.isdir(os.path.join(os.getcwd(), 'test_directory', x))]:
     try:
