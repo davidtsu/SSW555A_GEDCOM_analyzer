@@ -19,7 +19,7 @@ class Test_US04(unittest.TestCase):
         g = GED_Repo(os.path.join(os.getcwd(), 'test_directory', 'US04', 'ssw555a_input.ged'))
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
-        g.user_story_4
+        g.user_story_4()
         sys.stdout = sys.__stdout__
         output_str1 = 'US04 - Jodie /John/ and Jimmy /John/ married after divorce on line 22\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
