@@ -125,10 +125,10 @@
 1 FAMS @F5-US15-A@
 1 FAMC @F4-US15-A@
 0 @I12-US15-A@ INDI
-1 NAME Jimmy /Smith/
+1 NAME Jimmy /Smithy3/
 2 GIVN Jimmy
-2 SURN Smith
-2 _MARNM Smith
+2 SURN Smithy3
+2 _MARNM Smithy3
 1 SEX M
 1 BIRT
 2 DATE 7 OCT 1940

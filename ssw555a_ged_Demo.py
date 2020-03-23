@@ -25,6 +25,8 @@ def main():
         print(f'Analyzing final cumulative file data.')
         print(file_list)
         g = GED_Repo(file_list)
+        g.check_data()
+        g.print_data()
         g.print_individuals()
         g.print_families()
     except ValueError as v:

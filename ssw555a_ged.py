@@ -25,35 +25,40 @@ class GED_Repo:
                     self.read_ged(in_file)
 
                     # finish calculating data
-                    self.set_ages()
-
-                    self.US23_unique_name_and_birthdate() # this must be done for EVERY GEDCOM file
+                    self.set_data()
 
                 else:
                     print('Bad input file.')
-
-            # after reading all files from folder, check data
-            self.check_bday()       # US08 and US09
-            self.user_story_01()    # US01
-            self.user_story_2()     # US02 and US10
-            self.user_story_3()     # US03
-            self.user_story_4()     # US04
-            self.user_story_5()     # US05
-            self.user_story_6()     # US06
-            self.user_story_15()    # US15
-            self.user_story_21()    # US21
-
-            # printing data
-            self.US29_list_deceased()
-            self.user_story_35()
-            self.user_story_36()
-            self.US38_upcoming_birthdays()
-            self.US39_upcoming_anniversaries()
 
         except FileNotFoundError as f:
             raise f
         except ValueError as v:
             raise v
+
+    def set_data(self):
+        ''' all user stories related to CHANGING data should probably go here '''
+        self.set_ages()
+        self.US23_unique_name_and_birthdate() # this must be done for EVERY GEDCOM file
+    
+    def check_data(self):
+        ''' all user stories related to CHECKING data should probably go here '''
+        self.check_bday()       # US08 and US09
+        self.user_story_01()    # US01
+        self.user_story_2()     # US02 and US10
+        self.user_story_3()     # US03
+        self.user_story_4()     # US04
+        self.user_story_5()     # US05
+        self.user_story_6()     # US06
+        self.user_story_15()    # US15
+        self.user_story_21()    # US21
+
+    def print_data(self):
+        ''' all user stories related to PRINTING data should go here '''
+        self.US29_list_deceased()
+        self.user_story_35()
+        self.user_story_36()
+        self.US38_upcoming_birthdays()
+        self.US39_upcoming_anniversaries()
 
     def read_ged(self, ip, sep=' '):
         """ For reading GEDCOM files """
@@ -729,6 +734,8 @@ def main():
         try:
             print(f'Creating GED_Repo for files in {folder}')
             g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', folder, f) for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')])
+            g.check_data()
+            g.print_data()
             g.print_individuals()
             g.print_families()
         except ValueError as v:
