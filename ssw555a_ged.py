@@ -385,10 +385,7 @@ class GED_Repo:
     def US23_unique_name_and_birthdate(self):
         """ US23: Unique name and birth date
         No more than one individual with the same name and birth date should appear in a GEDCOM file
-        Throws an error if there are two people with the same name and birthdate """
-
-        print("US23: Unique Name and Birthdate")
-        unique = True
+        Prints if there are two people with the same name and birthdate """
         unique_list = list() # list structure - [ (person, birthday), line, (person, birthday), line ]
 
         for person in self.individuals.values():
@@ -400,12 +397,9 @@ class GED_Repo:
                 duplicate_index = unique_list.index(p)
                 duplicate_line = unique_list[duplicate_index + 1]
                 print(f"US23: Two people with the same name and birthdate: {p} on GEDCOM line: {duplicate_line} and {p} on GEDCOM line {line}.")
-                unique = False
             else:
                 unique_list.append(p)
                 unique_list.append(line)
-        if unique == True:
-            print("US23: All individuals have unique names and birthdates.")
 
     def US29_list_deceased(self):
         """ US29: List deceased
