@@ -3,7 +3,7 @@ ssw555a_ged.py
 @Author: David Tsu, Ejona Kocibelli, Akshay Lavhagale, Zephyr Zambrano, Xiaojun Zhu
 file reader for GEDCOM files
 """
-import os, math
+import os, math, itertools
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
@@ -50,6 +50,7 @@ class GED_Repo:
         self.user_story_6()     # US06
         self.user_story_07()    # US07
         self.check_bday()       # US08 and US09
+        self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.user_story_21()    # US21
 
@@ -351,13 +352,24 @@ class GED_Repo:
                         # if child dies later than nine months after father dies
                         if not dad.alive and dad.death + relativedelta(months=9) < bday:
                             print(f'US09 - {self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
-                    #else:
-                    #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
+
+    def user_story_13(self):
+        """ checks if siblings are born with enough separation (outside of 8mo or within 2days of each other) """
+        for family in self.families.values():
+            if family.children != 'NA':
+                bday_dict = dict() # { iid1: bday1, iid2: bday1, iid3: bday2 }
+                for child in family.children:
+                    bday_dict[child] = self.individuals[child].birthday
+                for i1, i2 in itertools.combinations(bday_dict, 2):
+                    older = bday_dict[i1] if bday_dict[i1] < bday_dict[i2] else bday_dict[i2]
+                    younger = bday_dict[i1] if bday_dict[i1] >= bday_dict[i2] else bday_dict[i2]
+                    if older + relativedelta(days=1) < younger and younger < older + relativedelta(months=8):
+                        print(f'US13 - {min(self.individuals[i1].name, self.individuals[i2].name)} and {max(self.individuals[i1].name, self.individuals[i2].name)} have birthdays that are too close together on lines {min(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)} and {max(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)}')
 
     def user_story_15(self):
         for family in self.families.values():
-                if len(family.children) >= 15:
-                    print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+            if len(family.children) >= 15:
+                print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
     
     def user_story_21(self):   
         """US21: checks the correct gender of husband and wife"""   
