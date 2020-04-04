@@ -1,18 +1,18 @@
 0 HEAD
 0 @I1@-US38-B@ INDI
-1 NAME Child /Lastname/
+1 NAME Child /LastnameUS38-2/
 1 SEX M
 1 BIRT
 2 DATE 18 JAN 2000
 1 FAMC @F1@-US38-B@
 0 @I2@-US38-B@ INDI
-1 NAME Father /Lastname/
+1 NAME Father /LastnameUS38-2/
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1950
 1 FAMS @F1@-US38-B@
 0 @I3@-US38-B@ INDI
-1 NAME Mother /Lastname/
+1 NAME Mother /LastnameUS38-2/
 1 SEX F
 1 BIRT
 2 DATE 30 JAN 1950
