@@ -430,12 +430,8 @@ class GED_Repo:
         """ US29: List deceased
         Prints a list of deceased individuals to the user. """
         print("US29: List deceased")
-        if len(deceased) == 0:
-            print("No deceased.")
-            return("No deceased.")
-        else:
-            print(deceased)
-            return deceased
+        print(deceased)
+        return deceased
     
     def user_story_35(self):
         ''' US35 - prints list of individuals born in the last 30 days '''
