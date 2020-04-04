@@ -52,7 +52,8 @@ class GED_Repo:
         self.check_bday()       # US08 and US09
         self.user_story_15()    # US15
         self.user_story_21()    # US21
-
+        self.user_story_11()
+        self.user_story_12()
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
         self.US29_list_deceased()
@@ -269,7 +270,23 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
-      
+
+
+    # def user_story_12(self):
+    #     for family in self.families.values():
+    #         if self.individuals[family.husb_id].death - self.individuals[family.children].age > 80:
+    #             print("US12: Error")
+
+                        
+    def user_story_11(self):
+        for family1 in self.families.values():
+            for family2 in self.families.values():
+                if family1.fid != family2.fid:
+                    if family1.husb_id == family2.husb_id:
+                        if family1.divorced == 'NA' and family2.divorced == 'NA' or family1.married < family2.married < family1.divorced:
+                            print(
+                                f'US11: married twice')
+
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
@@ -353,6 +370,18 @@ class GED_Repo:
                             print(f'US09 - {self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
+
+    def user_story_33(self):
+        orphans = []
+        for fam in self.families.values():
+            for child in fam.children:
+                child_age = self.individuals[child].age
+                if fam.husb_id and fam.wife_id:
+                    dad = self.individuals[fam.husb_id]
+                    mom = self.individuals[fam.wife_id]
+                    if not mom.alive and not dad.alive and child_age < 18:
+                        orphans.append(self.individuals[child].name)
+        return orphans
 
     def user_story_15(self):
         for family in self.families.values():
@@ -558,7 +587,7 @@ class Individual:
         self._death_line = 0
 
         self.child = child          # set
-        self._child_lines = set()
+        self._child_lines = 0
 
         self.spouse = spouse        # set
         self._spouse_lines = set()
@@ -672,7 +701,7 @@ class Family:
         self._wife_name_line = 0
 
         self.children = children        # set
-        self._children_lines = set()
+        self._children_lines = 0
 
         self.death = death  # datetime object
         self._death_line = 0
