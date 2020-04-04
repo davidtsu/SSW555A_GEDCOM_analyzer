@@ -59,6 +59,8 @@ class GED_Repo:
         self.user_story_36()
         self.US38_upcoming_birthdays()
         self.US39_upcoming_anniversaries()
+        self.US30_living_married()
+        self.US31_living_single()
 
     def read_ged(self, ip, sep=' '):
         """ For reading GEDCOM files """
@@ -473,7 +475,7 @@ class GED_Repo:
                 married_curr_year = married.replace(year=today.year)
             
                 if today < married_curr_year and married_curr_year < thirty_days:
-                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y"), "Husband: " + vals[4], "Wife: " + vals[6]))
+                    upcoming_anniversaries.append((married.strftime("%m/%d/%Y"), "Husband: " + vals[4], "Wife: " + vals[6],))
 
         self.US39_print_upcoming_anniversaries(upcoming_anniversaries)
     
@@ -489,6 +491,65 @@ class GED_Repo:
         else:
             print(upcoming_anniversaries)
             return(upcoming_anniversaries)
+
+    def US30_living_married(self):
+        """  US30: List living married
+        List all living married people in a GEDCOM file """
+        living_married = list()
+        i=1
+
+        for family in self.families.values():
+            vals = family.get_values()
+            divorced= vals[2]
+            husb_id= vals[3]
+            wife_id= vals[5]
+            
+            if divorced == "NA" and wife_id != "NA" and wife_id != "" and husb_id != "NA" and husb_id != "":
+               if self.individuals[wife_id].alive==True and self.individuals[husb_id].alive==True:
+                  living_married.append(("living couple #"+str(i), "Husband: " + vals[4], "Wife: " + vals[6],))
+                  i+=1
+        self.US30_print_living_married(living_married)
+    
+    def US30_print_living_married(self, living_married):
+            """ US30: List living married
+            Prints all living married people in a GEDCOM file """
+
+            print("US30: List living married couples") 
+
+            if len(living_married) == 0:
+                print("Either wife or husband in married couples is died.")
+                return("Either wife or husband in married couples is died.")
+            else:
+                print(living_married)
+                return(living_married)
+
+
+    def US31_living_single(self):
+        """  US31: List living singles
+        List all living people over 30 who have never been married in a GEDCOM file """
+        living_singles = list()
+
+        for individuals in self.individuals.values():
+            vals = individuals.get_values()
+            if vals[8] == "NA" and vals[5]==True and vals[4]>30:
+               living_singles.append(("ID"+vals[0], "Name: " + vals[1], "Age: " + str(vals[4]),))
+
+        self.US31_print_living_singles(living_singles)
+    
+    def US31_print_living_singles(self, living_singles):
+        """  US31: List living singles
+        List all living people over 30 who have never been married in a GEDCOM file """
+
+        print("US31: List all living people over 30 who have never been married") 
+
+        if len(living_singles) == 0:
+            print("No one is over 30 and has never been married.")
+            return("No one is over 30 and has never been married.")
+        else:
+
+            print(living_singles)
+            return(living_singles)
+
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
