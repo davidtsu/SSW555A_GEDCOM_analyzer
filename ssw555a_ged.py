@@ -8,6 +8,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 from datetime import date
+from collections import Counter
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
@@ -53,6 +54,7 @@ class GED_Repo:
         self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.user_story_21()    # US21
+        self.user_story_24()    # US24
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
@@ -411,6 +413,16 @@ class GED_Repo:
                 unique_list.append(line)
         if unique == True:
             print("US23: All individuals have unique names and birthdates.")
+
+    def user_story_24(self):
+        ''' check that each family has a unique combination of husband name, wife name, and marriage date '''
+        existing_families = set()
+        for family in self.families.values():
+            if family.married and family.husb_name != '' and family.wife_name != '':
+                if (family.married, family.husb_name, family.wife_name) in existing_families:
+                    print(f'US24: {family.fid} family data appears at least twice with same spouses by name and the same marriage date on line {family._married_line}')
+                else:
+                    existing_families.add((family.married, family.husb_name, family.wife_name))
 
     def US29_list_deceased(self):
         """ US29: List deceased
