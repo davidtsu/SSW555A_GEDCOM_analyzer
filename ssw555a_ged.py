@@ -52,6 +52,8 @@ class GED_Repo:
         self.check_bday()       # US08 and US09
         self.user_story_15()    # US15
         self.user_story_21()    # US21
+        self.user_story_17()    # US17
+        self.user_story_18()    # US18
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
@@ -498,6 +500,34 @@ class GED_Repo:
             print(upcoming_anniversaries)
             return(upcoming_anniversaries)
 
+    # def user_story_17(self):
+    #     """ Parents should not marry any of their children """
+    #     for family in self.families.values():
+    #         if family.married != 'NA' and family.wife_id != 'NA' and family.husb_id != 'NA' and family.children != 'NA':
+    #             if len(family.children) > 0:
+    #                 if self.individuals[family.husb_id] == self.individuals[family.husb_id] and self.individuals[family.children] == self.individuals[family.wife_id]:
+    #                     print(f"US17 - {self.individuals[family.children].name} and {self.individuals[family.husb_id].name} are married on line {family._married_line}")
+    #                 if self.individuals[family.wife_id] == self.individuals[family.wife_id] and self.individuals[family.children] == self.individuals[family.husb_id]:
+    #                     print(f"US17 - {self.individuals[family.children].name} and {self.individuals[family.wife_id].name} are married on line {family._married_line}")
+    
+    def user_story_18(self):
+        """ Siblings should not marry one another """
+        for family in self.families.values():
+            if family.husb_id != 'NA':
+                if len(family.husb_id.children) > 0:
+                    for child in family.husb_id.children:
+                        c = self.individuals(family.children)
+                        c.father = family.husb_id
+            if family.wife_id != 'NA':
+                if len(family.wife_id.children) > 0:
+                    for child in family.wife_id.children:
+                        c = self.individuals(family.children)
+                        c.mother = family.wife_id
+        for family in self.families.values():
+            if family.husb_id != 'NA' and family.wife_id != 'NA':
+                if family.husb_id.mother == family.wife_id.mother or family.husb_id.father == family.wife_id.father:
+                    print(f"US18 - {self.individuals[family.husb_id].name} and {self.individuals[family.wife_id].name} are married on line {family._married_line}")
+            
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
@@ -534,7 +564,7 @@ class GED_Repo:
 
 class Individual:
     """ stores info for a single individual """
-    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA', divorced = 'NA'):
+    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA', divorced = 'NA', mother = '', father = ''):
         """ constructor for Individual """
         self.iid = iid              # string
         self._iid_line = 0
@@ -568,6 +598,10 @@ class Individual:
 
         self.divorced = divorced    # datetime object
         self._divorced_line = 0
+
+        self.mother = ""
+
+        self.father = ""
 
     def get_values(self):
         """ returns all values in individual as list for use in print """
@@ -641,6 +675,12 @@ class Individual:
         else:
             self.spouse = {s} if (s and s != 'NA') else 'NA'
             self._spouse_lines = {line_number}
+
+    def add_mother(self, person):
+        iid.mother = person.mother
+    
+    def add_father(self, person):
+        iid.father = person.father
 
 
 class Family:
