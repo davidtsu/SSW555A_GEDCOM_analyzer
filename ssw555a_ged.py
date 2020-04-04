@@ -3,11 +3,12 @@ ssw555a_ged.py
 @Author: David Tsu, Ejona Kocibelli, Akshay Lavhagale, Zephyr Zambrano, Xiaojun Zhu
 file reader for GEDCOM files
 """
-import os, math
+import os, math, itertools
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from prettytable import PrettyTable
 from datetime import date
+from collections import Counter
 
 class GED_Repo:
     """ stores data from a GEDCOM file """
@@ -42,15 +43,18 @@ class GED_Repo:
     
     def check_data(self):
         ''' all user stories related to CHECKING data should probably go here '''
-        self.check_bday()       # US08 and US09
         self.user_story_01()    # US01
         self.user_story_2()     # US02 and US10
         self.user_story_3()     # US03
         self.user_story_4()     # US04
         self.user_story_5()     # US05
         self.user_story_6()     # US06
+        self.user_story_07()    # US07
+        self.check_bday()       # US08 and US09
+        self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.user_story_21()    # US21
+        self.user_story_24()    # US24
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
@@ -226,38 +230,6 @@ class GED_Repo:
         self.families[f.fid] = f
         return Family()
 
-    def check_bday(self):
-        """ iterates through family dictionary, finding birthday issues
-        1. US08 - checks birthday after marriage, before divorce
-        2. US09 - checks birthday before parent's death
-        """
-        for fam in self.families.values():
-            if fam.children != 'NA':
-                # fam.children is either a set or 'NA' string
-                for child in fam.children:
-                    bday = self.individuals[child].birthday
-                    marr = fam.married
-                    div = fam.divorced
-
-                    # if child is born before marriage date, and not yet divorced
-                    if marr != 'NA' and bday < marr and div == 'NA':
-                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
-                    # if child is born more than 9 months after divorce
-                    if div != 'NA' and bday > div + relativedelta(months=9):
-                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
-
-                    if fam.husb_id and fam.wife_id:
-                        dad = self.individuals[fam.husb_id]
-                        mom = self.individuals[fam.wife_id]
-                        # if child is born any time after mother dies
-                        if not mom.alive and mom.death < bday:
-                            print(f'US09 - {self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
-                        # if child dies later than nine months after father dies
-                        if not dad.alive and dad.death + relativedelta(months=9) < bday:
-                            print(f'US09 - {self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
-                    #else:
-                    #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
-
     def user_story_01(self):
         """"check if Dates (birth, marriage, divorce, death) should not be after the current date"""
         td=datetime.today()
@@ -300,21 +272,6 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
-    def user_story_21(self):   
-        """US21: checks the correct gender of husband and wife"""   
-        for family in self.families.values():    
-            if family.married != 'NA':
-                if family.husb_id != 'NA':
-                    if self.individuals[family.husb_id].gender != 'NA':
-                        if self.individuals[family.husb_id].gender != 'M':
-                            print(
-                            f'US21 - {self.individuals[family.husb_id].name} gender is supposed to be male but is not on line {self.individuals[family.husb_id]._gender_line}')
-
-                if family.wife_id != 'NA':
-                    if self.individuals[family.wife_id].gender != 'NA':
-                        if self.individuals[family.wife_id].gender != 'F': 
-                            print(
-                                f'US21 - {self.individuals[family.wife_id].name} gender is supposed to be female but is not on line {self.individuals[family.husb_id]._gender_line}')
       
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
@@ -362,25 +319,75 @@ class GED_Repo:
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
 
+    def user_story_07(self):
+        """ checks that age of individuals is <150 """
+        for ind in self.individuals.values():
+            if ind.age >= 150:
+                print(f'US07 - {ind.name} is age {ind.age}, which is over 150 years old, on line {ind._age_line}')
+
+    def check_bday(self):
+        """ iterates through family dictionary, finding birthday issues
+        1. US08 - checks birthday after marriage, before divorce
+        2. US09 - checks birthday before parent's death
+        """
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                # fam.children is either a set or 'NA' string
+                for child in fam.children:
+                    bday = self.individuals[child].birthday
+                    marr = fam.married
+                    div = fam.divorced
+
+                    # if child is born before marriage date, and not yet divorced
+                    if marr != 'NA' and bday < marr and div == 'NA':
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
+                    # if child is born more than 9 months after divorce
+                    if div != 'NA' and bday > div + relativedelta(months=9):
+                        print(f'US08 - {self.individuals[child].name} birthday before marriage on line {self.individuals[child]._birthday_line}')
+
+                    if fam.husb_id and fam.wife_id:
+                        dad = self.individuals[fam.husb_id]
+                        mom = self.individuals[fam.wife_id]
+                        # if child is born any time after mother dies
+                        if not mom.alive and mom.death < bday:
+                            print(f'US09 - {self.individuals[child].name} birthday after mom death date on line {self.individuals[child]._birthday_line}')
+                        # if child dies later than nine months after father dies
+                        if not dad.alive and dad.death + relativedelta(months=9) < bday:
+                            print(f'US09 - {self.individuals[child].name} birthday after dads death date on line {self.individuals[child]._birthday_line}')
+
+    def user_story_13(self):
+        """ checks if siblings are born with enough separation (outside of 8mo or within 2days of each other) """
+        for family in self.families.values():
+            if family.children != 'NA':
+                bday_dict = dict() # { iid1: bday1, iid2: bday1, iid3: bday2 }
+                for child in family.children:
+                    bday_dict[child] = self.individuals[child].birthday
+                for i1, i2 in itertools.combinations(bday_dict, 2):
+                    older = bday_dict[i1] if bday_dict[i1] < bday_dict[i2] else bday_dict[i2]
+                    younger = bday_dict[i1] if bday_dict[i1] >= bday_dict[i2] else bday_dict[i2]
+                    if older + relativedelta(days=1) < younger and younger < older + relativedelta(months=8):
+                        print(f'US13 - {min(self.individuals[i1].name, self.individuals[i2].name)} and {max(self.individuals[i1].name, self.individuals[i2].name)} have birthdays that are too close together on lines {min(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)} and {max(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)}')
+
     def user_story_15(self):
         for family in self.families.values():
-                if len(family.children) >= 15:
-                    print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+            if len(family.children) >= 15:
+                print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+    
+    def user_story_21(self):   
+        """US21: checks the correct gender of husband and wife"""   
+        for family in self.families.values():    
+            if family.married != 'NA':
+                if family.husb_id != 'NA':
+                    if self.individuals[family.husb_id].gender != 'NA':
+                        if self.individuals[family.husb_id].gender != 'M':
+                            print(
+                            f'US21 - {self.individuals[family.husb_id].name} gender is supposed to be male but is not on line {self.individuals[family.husb_id]._gender_line}')
 
-    def user_story_35(self):
-        ''' US35 - prints list of individuals born in the last 30 days '''
-        td=datetime.today()
-        for individual in self.individuals.values():
-            if (individual.birthday + relativedelta(days=30) ) > td:
-               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}') 
-
-    def user_story_36(self):
-        ''' US36 - prints list of individuals who died in the last 30 days '''
-        td=datetime.today()
-        for individual in self.individuals.values():
-            if individual.death != 'NA':
-                if (individual.death + relativedelta(days=30) ) > td:
-                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
+                if family.wife_id != 'NA':
+                    if self.individuals[family.wife_id].gender != 'NA':
+                        if self.individuals[family.wife_id].gender != 'F': 
+                            print(
+                                f'US21 - {self.individuals[family.wife_id].name} gender is supposed to be female but is not on line {self.individuals[family.husb_id]._gender_line}')
     
     def US23_unique_name_and_birthdate(self):
         """ US23: Unique name and birth date
@@ -401,6 +408,16 @@ class GED_Repo:
                 unique_list.append(p)
                 unique_list.append(line)
 
+    def user_story_24(self):
+        ''' check that each family has a unique combination of husband name, wife name, and marriage date '''
+        existing_families = set()
+        for family in self.families.values():
+            if family.married and family.husb_name != '' and family.wife_name != '':
+                if (family.married, family.husb_name, family.wife_name) in existing_families:
+                    print(f'US24: {family.fid} family data appears at least twice with same spouses by name and the same marriage date on line {family._married_line}')
+                else:
+                    existing_families.add((family.married, family.husb_name, family.wife_name))
+
     def US29_list_deceased(self):
         """ US29: List deceased
         List all deceased individuals in a GEDCOM file """
@@ -419,6 +436,21 @@ class GED_Repo:
         else:
             print(deceased)
             return deceased
+    
+    def user_story_35(self):
+        ''' US35 - prints list of individuals born in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if (individual.birthday + relativedelta(days=30) ) > td:
+               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}') 
+
+    def user_story_36(self):
+        ''' US36 - prints list of individuals who died in the last 30 days '''
+        td=datetime.today()
+        for individual in self.individuals.values():
+            if individual.death != 'NA':
+                if (individual.death + relativedelta(days=30) ) > td:
+                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
     
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays
@@ -604,8 +636,6 @@ class Individual:
                 bd = self.birthday
                 dd = self.death
                 self.age = math.floor((dd - bd).days / 365.2425)
-        if self.age >= 150:
-            print(f'US07 - {self.name} is age {self.age}, which is over 150 years old, on line {line_number}')
 
     def set_alive(self, a, line_number=0):
         """ sets new individual living status """
