@@ -53,8 +53,10 @@ class GED_Repo:
         self.check_bday()       # US08 and US09
         self.user_story_13()    # US13
         self.user_story_15()    # US15
+        self.US16_male_last_names()
         self.user_story_21()    # US21
         self.user_story_24()    # US24
+        self.US25_unique_first_names_in_families()
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
@@ -372,6 +374,72 @@ class GED_Repo:
         for family in self.families.values():
             if len(family.children) >= 15:
                 print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+            
+    def US16_male_last_names(self):
+        """ US16: Male last names
+        All male members of a family should have the same last name """
+
+        for family in self.families.values():
+            husband = family.husb_name
+            x = husband.find("/")
+            lastname = husband[x + 1:len(husband) - 1]
+            children = family.children
+            if "NA" in children: # no children
+                pass
+            else: # family has children
+                for child in children:
+                    for person in self.individuals.values():
+                        if person.iid == child:
+                            if person.gender == "M":
+                                y = person.name.find("/")
+                                child_lastname = person.name[y + 1:len(person.name) - 1]
+                                if child_lastname != lastname:
+                                    print(f"US16: Male child: {person.name} with ID: {person.iid} on GEDCOM line: {person._name_line} has a differet last name than the family last name: {lastname}.")
+                        break
+
+
+    def US25_unique_first_names_in_families(self):
+        """ US25: Unique first names in families
+        No more than one child with the same name and birth date should appear in a family """
+        
+        for family in self.families.values():
+            husband_fullname = family.husb_name
+            wife_fullname = family.wife_name
+
+            x = husband_fullname.find("/")
+            y = wife_fullname.find("/")
+
+            husband = husband_fullname[0:x - 1]
+            wife = wife_fullname[0:y - 1]
+
+            firstnames = list()
+            firstnames.append(husband)
+            firstnames.append(wife)
+            
+            if husband == wife:
+                h_line = 0
+                w_line = 0
+                for person in self.individuals.values():
+                    if person.iid == family.husb_id:
+                        h_line = person._name_line
+                    if person.iid == family.wife_id:
+                        w_line = person._name_line
+                print(f"US25: Husband: {husband_fullname} on GEDCOM line: {h_line} and wife: {wife_fullname} on GEDCOM line {w_line} have the same first name.")
+            else:
+                children = family.children
+                if "NA" in children: # no children
+                    pass
+                else: # family has children
+                    for child in children:
+                        for person in self.individuals.values():
+                            if person.iid == child:
+                                child_fullname = person.name
+                                z = child_fullname.find("/")
+                                child = person.name[0:z - 1]\
+                                
+                                if child in firstnames:
+                                    print(f"US25: Child: {person.name} on GEDCOM line: {person._name_line} has the same first name as another family member.")
+                            break
     
     def user_story_21(self):   
         """US21: checks the correct gender of husband and wife"""   
