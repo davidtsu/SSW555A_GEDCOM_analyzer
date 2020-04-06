@@ -64,11 +64,11 @@ class GED_Repo:
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
-        self.US29_list_deceased()
-        self.user_story_35()
-        self.user_story_36()
-        self.US38_upcoming_birthdays()
-        self.US39_upcoming_anniversaries()
+        # self.US29_list_deceased()
+        # self.user_story_35()
+        # self.user_story_36()
+        # self.US38_upcoming_birthdays()
+        # self.US39_upcoming_anniversaries()
         # self.user_story_33()
      
         
