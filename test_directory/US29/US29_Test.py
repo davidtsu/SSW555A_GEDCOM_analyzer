@@ -24,7 +24,7 @@ class Test_US29(unittest.TestCase):
 
         # no deceased
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US29", "US29_No_Deceased.ged")])
-        self.assertEqual(GED_Repo.US29_print_deceased(self, []), "No deceased.")
+        self.assertEqual(GED_Repo.US29_print_deceased(self, []), [])
 
 
 if __name__ == "__main__":
