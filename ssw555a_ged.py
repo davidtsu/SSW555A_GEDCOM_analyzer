@@ -648,6 +648,23 @@ class GED_Repo:
                 if f2.husb_id in f1.children and f2.wife_id in f1.children:
                     print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
 
+    def user_story_17(self):
+        """ Parents should not marry any of their children """
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f1.fid != f2.fid:
+                    if f1.husb_id == f2.husb_id and f2.wife_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.wife_id].name} and {self.individuals[f1.husb_id].name} are married on line {f1._married_line}")
+                    if f1.wife_id == f2.wife_id and f2.husb_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.husb_id].name} and {self.individuals[f1.wife_id].name} are married on line {f1._married_line}")
+
+    def user_story_18(self):
+        """ Siblings should not marry each other """
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f2.husb_id in f1.children and f2.wife_id in f1.children:
+                    print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
+
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
