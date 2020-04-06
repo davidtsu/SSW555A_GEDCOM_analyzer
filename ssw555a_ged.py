@@ -56,6 +56,7 @@ class GED_Repo:
         self.US16_male_last_names() # US16
         self.user_story_21()    # US21
         self.user_story_24()    # US24
+        self.US25_unique_first_names_in_families()  # US25
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
@@ -440,6 +441,49 @@ class GED_Repo:
                     print(f'US24: {family.fid} family data appears at least twice with same spouses by name and the same marriage date on line {family._married_line}')
                 else:
                     existing_families.add((family.married, family.husb_name, family.wife_name))
+    
+    def US25_unique_first_names_in_families(self):
+        """ US25: Unique first names in families
+        No more than one child with the same name and birth date should appear in a family """
+
+        for family in self.families.values():
+            husband_fullname = family.husb_name
+            wife_fullname = family.wife_name
+
+            x = husband_fullname.find("/")
+            y = wife_fullname.find("/")
+
+            husband = husband_fullname[0:x - 1]
+            wife = wife_fullname[0:y - 1]
+
+            firstnames = list()
+            firstnames.append(husband)
+            firstnames.append(wife)
+
+            if husband == wife:
+                h_line = 0
+                w_line = 0
+                for person in self.individuals.values():
+                    if person.iid == family.husb_id:
+                        h_line = person._name_line
+                    if person.iid == family.wife_id:
+                        w_line = person._name_line
+                print(f"US25: Husband: {husband_fullname} on GEDCOM line: {h_line} and wife: {wife_fullname} on GEDCOM line {w_line} have the same first name.")
+            else:
+                children = family.children
+                if "NA" in children: # no children
+                    pass
+                else: # family has children
+                    for child in children:
+                        for person in self.individuals.values():
+                            if person.iid == child:
+                                child_fullname = person.name
+                                z = child_fullname.find("/")
+                                child = person.name[0:z - 1]\
+
+                                if child in firstnames:
+                                    print(f"US25: Child: {person.name} on GEDCOM line: {person._name_line} has the same first name as another family member.")
+                            break
 
     def US29_list_deceased(self):
         """ US29: List deceased
