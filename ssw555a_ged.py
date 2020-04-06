@@ -637,60 +637,39 @@ class GED_Repo:
     def US30_living_married(self):
         """  US30: List living married
         List all living married people in a GEDCOM file """
-        living_married = list()
-        i=1
-
-        for family in self.families.values():
-            vals = family.get_values()
-            divorced= vals[2]
-            husb_id= vals[3]
-            wife_id= vals[5]
-            
-            if divorced == "NA" and wife_id != "NA" and wife_id != "" and husb_id != "NA" and husb_id != "":
-               if self.individuals[wife_id].alive==True and self.individuals[husb_id].alive==True:
-                  living_married.append(("living couple #"+str(i), "Husband: " + vals[4], "Wife: " + vals[6],))
-                  i+=1
-        self.US30_print_living_married(living_married)
-    
-    def US30_print_living_married(self, living_married):
-            """ US30: List living married
-            Prints all living married people in a GEDCOM file """
-
-            print("US30: List living married couples") 
-
-            if len(living_married) == 0:
-                print("Either wife or husband in married couples is died.")
-                return("Either wife or husband in married couples is died.")
-            else:
-                print(living_married)
-                return(living_married)
-
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Living Husband Name', ' Living Wife Name']
+        for i in self.families.values():
+            if i.married != 'NA' and i.divorced == 'NA' and i.wife_id != "NA" and i.wife_id != '' and i.husb_id != "NA" and i.husb_id != '':
+               if self.individuals[i.wife_id].alive and self.individuals[i.husb_id].alive:
+                    pt.add_row([i.fid, i.husb_name, i.wife_name])
+        print("US30: List living married couples")
+        if len(pt._rows) == 0:
+            print('No living married couples.')
+            return 'No living married couples.'
+        else:
+            pt.sortby = 'Family ID'
+            print(pt)
+            return pt
 
     def US31_living_single(self):
         """  US31: List living singles
         List all living people over 30 who have never been married in a GEDCOM file """
-        living_singles = list()
-
-        for individuals in self.individuals.values():
-            vals = individuals.get_values()
-            if vals[8] == "NA" and vals[5]==True and vals[4]>30:
-               living_singles.append(("ID"+vals[0], "Name: " + vals[1], "Age: " + str(vals[4]),))
-
-        self.US31_print_living_singles(living_singles)
-    
-    def US31_print_living_singles(self, living_singles):
-        """  US31: List living singles
-        List all living people over 30 who have never been married in a GEDCOM file """
-
-        print("US31: List all living people over 30 who have never been married") 
-
-        if len(living_singles) == 0:
-            print("No one is over 30 and has never been married.")
-            return("No one is over 30 and has never been married.")
+        pt = PrettyTable()
+        pt.field_names = ['Unmarried Individual ID', 'Unmarried Individual Name']
+        marriage_husb_ids = [ x.husb_id for x in self.families.values() ]
+        marriage_wife_ids = [ x.wife_id for x in self.families.values() ]
+        for i in self.individuals.values():
+            if i.age >= 30 and not (i.iid in marriage_husb_ids or i.iid in marriage_wife_ids):
+                pt.add_row([i.iid, i.name])
+        print("US31: List all living people over 30 who have never been married")
+        if len(pt._rows) == 0:
+            print('No unmarried individuals over 30.')
+            return 'No unmarried individuals over 30.'
         else:
-
-            print(living_singles)
-            return(living_singles)
+            pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
 
     def user_story_17(self):
         """ Parents should not marry any of their children """
