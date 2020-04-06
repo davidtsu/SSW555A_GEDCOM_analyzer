@@ -1,18 +1,20 @@
 0 HEAD
 0 @I1@-US39-A@ INDI
-1 NAME Child /LastnameUS39-1/
+1 NAME Child /Lastname/
+2 GIVN Child
+2 SURN Lastname
 1 SEX M
 1 BIRT
 2 DATE 18 APR 2000
 1 FAMC @F1@-US39-A@
 0 @I2@-US39-A@ INDI
-1 NAME Father /LastnameUS39-1/
+1 NAME Father /Lastname/
 1 SEX M
 1 BIRT
 2 DATE 1 JAN 1950
 1 FAMS @F1@-US39-A@
 0 @I3@-US39-A@ INDI
-1 NAME Mother /LastnameUS39-1/
+1 NAME Mother /Lastname/
 1 SEX F
 1 BIRT
 2 DATE 20 JAN 1950

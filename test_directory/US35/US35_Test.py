@@ -21,6 +21,10 @@ class Test_US35(unittest.TestCase):
         g.user_story_35()
         sys.stdout = sys.__stdout__
         output_str1 = 'US35 - Emith /Ohou/ were born in the last 30 days on line 15\n'
+
+        print('=============================')
+        print(capturedOutput.getvalue())
+        print('=============================')
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 if __name__ == "__main__":

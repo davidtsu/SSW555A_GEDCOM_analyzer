@@ -20,7 +20,11 @@ class Test_US30(unittest.TestCase):
         """ Tests US30. Ensures that List living married are printed to the user. """
         # Married couple are alive
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US30", "US30_Living_couples.ged")])
+<<<<<<< HEAD
+        self.assertEqual(GED_Repo.US30_print_living_married(self, [('living couple #1', 'Husband: Jim /Joy_US30/', 'Wife: Smith /Jo_A/')])
+=======
         self.assertEqual(GED_Repo.US30_print_living_married(self, [('living couple #1', 'Husband: Jim /Joy_US30/', 'Wife: Smith /Jo_A/')]))
+>>>>>>> 6edecca6e66b9fdc2790314905c6e90c9fa95a38
 
         # Married couple are not alive
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US30", "US30_No_Living_couples.ged")])
