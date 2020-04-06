@@ -504,10 +504,11 @@ class GED_Repo:
         """ Parents should not marry any of their children """
         for f1 in self.families.values():
             for f2 in self.families.values():
-                if f1.husb_id == f2.husb_id and f1.children == f2.wife_id:
-                    print(f"US17 - {self.individuals[f1.children].name} and {self.individuals[f1.husb_id].name} are married on line {f1._married_line}")
-                if f1.wife_id == f2.wife_id and f1.children == f2.husb_id:
-                    print(f"US17 - {self.individuals[f1.children].name} and {self.individuals[f1.wife_id].name} are married on line {f1._married_line}")
+                if f1.fid != f2.fid:
+                    if f1.husb_id == f2.husb_id and f2.wife_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.wife_id].name} and {self.individuals[f1.husb_id].name} are married on line {f1._married_line}")
+                    if f1.wife_id == f2.wife_id and f2.husb_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.husb_id].name} and {self.individuals[f1.wife_id].name} are married on line {f1._married_line}")
 
     def user_story_18(self):
         """ Siblings should not marry each other """
@@ -552,7 +553,7 @@ class GED_Repo:
 
 class Individual:
     """ stores info for a single individual """
-    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA', divorced = 'NA', mother = '', father = ''):
+    def __init__(self, iid = '', name = '', gender = '', birthday = '', age = 0, alive = True, death = 'NA', child = 'NA', spouse = 'NA', married = 'NA', divorced = 'NA'):
         """ constructor for Individual """
         self.iid = iid              # string
         self._iid_line = 0
@@ -586,10 +587,6 @@ class Individual:
 
         self.divorced = divorced    # datetime object
         self._divorced_line = 0
-
-        self.mother = ""
-
-        self.father = ""
 
     def get_values(self):
         """ returns all values in individual as list for use in print """
@@ -664,11 +661,6 @@ class Individual:
             self.spouse = {s} if (s and s != 'NA') else 'NA'
             self._spouse_lines = {line_number}
 
-    def add_mother(self, person):
-        iid.mother = person.mother
-    
-    def add_father(self, person):
-        iid.father = person.father
 
 
 class Family:
