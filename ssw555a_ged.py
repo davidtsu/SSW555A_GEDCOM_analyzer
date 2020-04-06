@@ -40,7 +40,7 @@ class GED_Repo:
         ''' all user stories related to CHANGING data should probably go here '''
         self.set_ages()
         self.US23_unique_name_and_birthdate() # this must be done for EVERY GEDCOM file
-    
+
     def check_data(self):
         ''' all user stories related to CHECKING data should probably go here '''
         self.user_story_01()    # US01
@@ -51,6 +51,8 @@ class GED_Repo:
         self.user_story_6()     # US06
         self.user_story_07()    # US07
         self.check_bday()       # US08 and US09
+        self.user_story_11()
+        self.user_story_12()
         self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.US16_male_last_names()
@@ -60,11 +62,14 @@ class GED_Repo:
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
-        self.US29_list_deceased()
-        self.user_story_35()
-        self.user_story_36()
-        self.US38_upcoming_birthdays()
-        self.US39_upcoming_anniversaries()
+        # self.US29_list_deceased()
+        # self.user_story_35()
+        # self.user_story_36()
+        # self.US38_upcoming_birthdays()
+        # self.US39_upcoming_anniversaries()
+        # self.user_story_33()
+
+
 
     def read_ged(self, ip, sep=' '):
         """ For reading GEDCOM files """
@@ -206,7 +211,7 @@ class GED_Repo:
             print(v)
         except FileNotFoundError:
             raise FileNotFoundError(f'Cannot open file. Please check {ip} exists and try again. GEDCOM line: {line_number}')
-    
+
     def line_to_tuple(self, line, sep, line_number):
         """ reads line, returns values in input """
         s = line.strip().split(sep, 2)
@@ -215,7 +220,7 @@ class GED_Repo:
         return tuple((s[i] if i < len(s) else "" for i in range(3)))
 
     def add_individual(self, i):
-        """ must pass in individual 
+        """ must pass in individual
         US22: checks if the individual ids are unique
         """
         if i.iid in self.individuals.keys():
@@ -224,7 +229,7 @@ class GED_Repo:
         return Individual()
 
     def add_family(self, f):
-        """ must pass in family 
+        """ must pass in family
         US22: checks if the family ids are unique
         """
         if f.fid in self.families.keys():
@@ -243,7 +248,7 @@ class GED_Repo:
             if pd !="NA" and pd>td:
                 print(f'US01 - {person.name} death after today on line {person._death_line}')
         for family in self.families.values():
-            fm=family.married 
+            fm=family.married
             fd=family.divorced
             if fm !="NA" and fm>td:
                 print(f'US01 - {self.individuals[family.wife_id].name} marriage after today on line {family._married_line}')
@@ -274,7 +279,7 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
-      
+
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
@@ -370,11 +375,50 @@ class GED_Repo:
                     if older + relativedelta(days=1) < younger and younger < older + relativedelta(months=8):
                         print(f'US13 - {min(self.individuals[i1].name, self.individuals[i2].name)} and {max(self.individuals[i1].name, self.individuals[i2].name)} have birthdays that are too close together on lines {min(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)} and {max(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)}')
 
+    def user_story_11(self):
+        """US11: checks if there is bigamy happening in a family in where husband/wife is married twice in the same time."""
+        processed = set()
+        for fam in self.families.values():
+            for fam2 in self.families.values():
+                ids = tuple(sorted([fam.fid, fam2.fid]))
+                if fam.fid != fam2.fid and ids not in processed:
+                    processed.add(ids)
+                    if fam.husb_id == fam2.husb_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' \
+                        or fam.married < fam2.married < fam.divorced:
+                            try:
+                                print(
+                                    f'US11 - {self.individuals[fam.husb_id].name} married twice on the same time on line {self.families[fam.fid]._married_line}')
+                            except KeyError:
+                                print(f'US11 - Husband or Wife is married twice at the same time.')
+                    if fam.wife_id == fam2.wife_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' \
+                        or fam.married < fam2.married < fam.divorced:
+                            try:
+                                print(
+                                        f'US11 - {self.individuals[fam.wife_id].name} married twice on the same time on line {self.families[fam.fid]._married_line}')
+                            except KeyError:
+                                print(f'US11 - Husband or Wife is married twice at the same time.')
+
+    def user_story_12(self):
+        """US12: checks if there is big gap age difference between father and child (>80) and mother and child (>60)"""
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    if fam.husb_id and fam.wife_id:
+                        if self.individuals[fam.husb_id].birthday != 'NA' and self.individuals[fam.wife_id].birthday != 'NA':
+                            if self.individuals[fam.husb_id].age - self.individuals[child].age > 80:
+                                print(
+                                    f"US12 - {self.individuals[fam.husb_id].name} is 80 years older than his child on line {self.individuals[fam.husb_id]._birthday_line}")
+                            if self.individuals[fam.wife_id].age - self.individuals[child].age > 60:
+                                print(
+                                    f'US12 - {self.individuals[fam.wife_id].name} is 60 years older than his child on line {self.individuals[fam.wife_id]._birthday_line}')
+
     def user_story_15(self):
         for family in self.families.values():
             if len(family.children) >= 15:
                 print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
-            
+
     def US16_male_last_names(self):
         """ US16: Male last names
         All male members of a family should have the same last name """
@@ -396,10 +440,10 @@ class GED_Repo:
                                 if child_lastname != lastname:
                                     print(f"US16: Male child: {person.name} with ID: {person.iid} on GEDCOM line: {person._name_line} has a differet last name than the family last name: {lastname}.")
                         break
-    
-    def user_story_21(self):   
-        """US21: checks the correct gender of husband and wife"""   
-        for family in self.families.values():    
+
+    def user_story_21(self):
+        """US21: checks the correct gender of husband and wife"""
+        for family in self.families.values():
             if family.married != 'NA':
                 if family.husb_id != 'NA':
                     if self.individuals[family.husb_id].gender != 'NA':
@@ -409,10 +453,10 @@ class GED_Repo:
 
                 if family.wife_id != 'NA':
                     if self.individuals[family.wife_id].gender != 'NA':
-                        if self.individuals[family.wife_id].gender != 'F': 
+                        if self.individuals[family.wife_id].gender != 'F':
                             print(
                                 f'US21 - {self.individuals[family.wife_id].name} gender is supposed to be female but is not on line {self.individuals[family.husb_id]._gender_line}')
-    
+
     def US23_unique_name_and_birthdate(self):
         """ US23: Unique name and birth date
         No more than one individual with the same name and birth date should appear in a GEDCOM file
@@ -441,11 +485,11 @@ class GED_Repo:
                     print(f'US24: {family.fid} family data appears at least twice with same spouses by name and the same marriage date on line {family._married_line}')
                 else:
                     existing_families.add((family.married, family.husb_name, family.wife_name))
-    
+
     def US25_unique_first_names_in_families(self):
         """ US25: Unique first names in families
         No more than one child with the same name and birth date should appear in a family """
-        
+
         for family in self.families.values():
             husband_fullname = family.husb_name
             wife_fullname = family.wife_name
@@ -459,7 +503,7 @@ class GED_Repo:
             firstnames = list()
             firstnames.append(husband)
             firstnames.append(wife)
-            
+
             if husband == wife:
                 h_line = 0
                 w_line = 0
@@ -480,7 +524,7 @@ class GED_Repo:
                                 child_fullname = person.name
                                 z = child_fullname.find("/")
                                 child = person.name[0:z - 1]\
-                                
+
                                 if child in firstnames:
                                     print(f"US25: Child: {person.name} on GEDCOM line: {person._name_line} has the same first name as another family member.")
                             break
@@ -499,13 +543,13 @@ class GED_Repo:
         print("US29: List deceased")
         print(deceased)
         return deceased
-    
+
     def user_story_35(self):
         ''' US35 - prints list of individuals born in the last 30 days '''
         td=datetime.today()
         for individual in self.individuals.values():
             if (individual.birthday + relativedelta(days=30) ) > td:
-               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}') 
+               print(f'US35 - {individual.name} were born in the last 30 days on line {individual._name_line}')
 
     def user_story_36(self):
         ''' US36 - prints list of individuals who died in the last 30 days '''
@@ -514,7 +558,7 @@ class GED_Repo:
             if individual.death != 'NA':
                 if (individual.death + relativedelta(days=30) ) > td:
                     print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
-    
+
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays
         List all living people in a GEDCOM file whose birthdays occur in the next 30 days """
@@ -529,11 +573,11 @@ class GED_Repo:
 
                 if today < bday_curr_year and bday_curr_year < thirty_days:
                     upcoming_bdays.append([person.name, bday.strftime("%m/%d/%Y")])
-        
+
         self.US38_print_upcoming_birthdays(upcoming_bdays)
-    
+
     def US38_print_upcoming_birthdays(self, upcoming_bdays):
-        """ US38: List upcoming birthdays 
+        """ US38: List upcoming birthdays
         Prints upcoming birthdays to the user """
 
         print("US38: List Upcoming Birthdays")
@@ -563,16 +607,16 @@ class GED_Repo:
                 if person.iid == husband_id or person.iid == wife_id:
                     if person.alive == False:
                         dead = True
-            
+
             if dead == False and married != "NA" and married != "":
                 married = datetime.strptime(married, "%Y-%m-%d")
                 married_curr_year = married.replace(year=today.year)
-            
+
                 if today < married_curr_year and married_curr_year < thirty_days:
                     upcoming_anniversaries.append([married.strftime("%m/%d/%Y"), vals[4], vals[6]])
 
         self.US39_print_upcoming_anniversaries(upcoming_anniversaries)
-    
+
     def US39_print_upcoming_anniversaries(self, upcoming_anniversaries):
         """ US39: List upcoming anniversaries
         Prints upcoming anniversaries to the user """
@@ -609,7 +653,7 @@ class GED_Repo:
         for i in self.individuals.values():
             pt.add_row(i.get_values())
         print(pt)
-    
+
     def print_families(self):
         """ prints list of families using prettytable """
         pt = PrettyTable()
@@ -645,7 +689,7 @@ class Individual:
         self._death_line = 0
 
         self.child = child          # set
-        self._child_lines = set()
+        self._child_lines = 0
 
         self.spouse = spouse        # set
         self._spouse_lines = set()
@@ -759,7 +803,7 @@ class Family:
         self._wife_name_line = 0
 
         self.children = children        # set
-        self._children_lines = set()
+        self._children_lines = 0
 
         self.death = death  # datetime object
         self._death_line = 0
