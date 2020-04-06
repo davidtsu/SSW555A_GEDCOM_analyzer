@@ -69,6 +69,9 @@ class GED_Repo:
         self.user_story_36()
         self.US38_upcoming_birthdays()
         self.US39_upcoming_anniversaries()
+        self.US30_living_married()
+        self.US31_living_single()
+        # self.user_story_37()
         # self.user_story_33()
      
         
@@ -630,6 +633,43 @@ class GED_Repo:
             pt.add_row([i[0], i[1], i[2]])
         print(pt)
         return(upcoming_anniversaries)
+    
+    def US30_living_married(self):
+        """  US30: List living married
+        List all living married people in a GEDCOM file """
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Living Husband Name', ' Living Wife Name']
+        for i in self.families.values():
+            if i.married != 'NA' and i.divorced == 'NA' and i.wife_id != "NA" and i.wife_id != '' and i.husb_id != "NA" and i.husb_id != '':
+               if self.individuals[i.wife_id].alive and self.individuals[i.husb_id].alive:
+                    pt.add_row([i.fid, i.husb_name, i.wife_name])
+        print("US30: List living married couples")
+        if len(pt._rows) == 0:
+            print('No living married couples.')
+            return 'No living married couples.'
+        else:
+            pt.sortby = 'Family ID'
+            print(pt)
+            return pt
+
+    def US31_living_single(self):
+        """  US31: List living singles
+        List all living people over 30 who have never been married in a GEDCOM file """
+        pt = PrettyTable()
+        pt.field_names = ['Unmarried Individual ID', 'Unmarried Individual Name']
+        marriage_husb_ids = [ x.husb_id for x in self.families.values() ]
+        marriage_wife_ids = [ x.wife_id for x in self.families.values() ]
+        for i in self.individuals.values():
+            if i.age >= 30 and not (i.iid in marriage_husb_ids or i.iid in marriage_wife_ids):
+                pt.add_row([i.iid, i.name])
+        print("US31: List all living people over 30 who have never been married")
+        if len(pt._rows) == 0:
+            print('No unmarried individuals over 30.')
+            return 'No unmarried individuals over 30.'
+        else:
+            pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
 
     def user_story_17(self):
         """ Parents should not marry any of their children """
