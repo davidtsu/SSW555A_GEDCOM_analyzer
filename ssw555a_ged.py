@@ -56,6 +56,8 @@ class GED_Repo:
         self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.US16_male_last_names() # US16
+        self.user_story_17()    # US17
+        self.user_story_18()    # US18
         self.user_story_21()    # US21
         self.user_story_24()    # US24
         self.US25_unique_first_names_in_families()  # US25
@@ -629,6 +631,23 @@ class GED_Repo:
         print(pt)
         return(upcoming_anniversaries)
 
+    def user_story_17(self):
+        """ Parents should not marry any of their children """
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f1.fid != f2.fid:
+                    if f1.husb_id == f2.husb_id and f2.wife_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.wife_id].name} and {self.individuals[f1.husb_id].name} are married on line {f1._married_line}")
+                    if f1.wife_id == f2.wife_id and f2.husb_id in f1.children:
+                        print(f"US17 - {self.individuals[f2.husb_id].name} and {self.individuals[f1.wife_id].name} are married on line {f1._married_line}")
+
+    def user_story_18(self):
+        """ Siblings should not marry each other """
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f2.husb_id in f1.children and f2.wife_id in f1.children:
+                    print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
+    
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
@@ -772,6 +791,7 @@ class Individual:
         else:
             self.spouse = {s} if (s and s != 'NA') else 'NA'
             self._spouse_lines = {line_number}
+
 
 
 class Family:
