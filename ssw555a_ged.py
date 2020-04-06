@@ -646,8 +646,11 @@ class GED_Repo:
         for f1 in self.families.values():
             for f2 in self.families.values():
                 if f2.husb_id in f1.children and f2.wife_id in f1.children:
-                    print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
-    
+                    try:
+                        print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
+                    except KeyError:
+                        print(f'US18 - Siblings married each other.')
+
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
