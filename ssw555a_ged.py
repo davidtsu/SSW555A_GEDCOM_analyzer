@@ -51,6 +51,8 @@ class GED_Repo:
         self.user_story_6()     # US06
         self.user_story_07()    # US07
         self.check_bday()       # US08 and US09
+        self.user_story_11()    # US11
+        self.user_story_12()    # US12
         self.user_story_13()    # US13
         self.user_story_15()    # US15
         self.US16_male_last_names() # US16
@@ -60,11 +62,14 @@ class GED_Repo:
 
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
-        self.US29_list_deceased()
-        self.user_story_35()
-        self.user_story_36()
-        self.US38_upcoming_birthdays()
-        self.US39_upcoming_anniversaries()
+        # self.US29_list_deceased()
+        # self.user_story_35()
+        # self.user_story_36()
+        # self.US38_upcoming_birthdays()
+        # self.US39_upcoming_anniversaries()
+        # self.user_story_33()
+     
+        
 
     def read_ged(self, ip, sep=' '):
         """ For reading GEDCOM files """
@@ -274,7 +279,7 @@ class GED_Repo:
                         elif self.individuals[family.wife_id].birthday + relativedelta(years=14) > family.married:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
-      
+
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
         for person in self.individuals.values():
@@ -370,6 +375,45 @@ class GED_Repo:
                     if older + relativedelta(days=1) < younger and younger < older + relativedelta(months=8):
                         print(f'US13 - {min(self.individuals[i1].name, self.individuals[i2].name)} and {max(self.individuals[i1].name, self.individuals[i2].name)} have birthdays that are too close together on lines {min(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)} and {max(self.individuals[i1]._birthday_line, self.individuals[i2]._birthday_line)}')
 
+    def user_story_11(self):
+        """US11: checks if there is bigamy happening in a family in where husband/wife is married twice in the same time."""
+        processed = set()
+        for fam in self.families.values():
+            for fam2 in self.families.values():
+                ids = tuple(sorted([fam.fid, fam2.fid]))
+                if fam.fid != fam2.fid and ids not in processed:
+                    processed.add(ids)
+                    if fam.husb_id == fam2.husb_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' \
+                        or fam.married < fam2.married < fam.divorced:
+                            try:
+                                print(
+                                    f'US11 - {self.individuals[fam.husb_id].name} married twice on the same time on line {self.families[fam.fid]._married_line}')
+                            except KeyError:
+                                print(f'US11 - Husband or Wife is married twice at the same time.')
+                    if fam.wife_id == fam2.wife_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' \
+                        or fam.married < fam2.married < fam.divorced:
+                            try:
+                                print(
+                                        f'US11 - {self.individuals[fam.wife_id].name} married twice on the same time on line {self.families[fam.fid]._married_line}')
+                            except KeyError:
+                                print(f'US11 - Husband or Wife is married twice at the same time.')
+
+    def user_story_12(self):   
+        """US12: checks if there is big gap age difference between father and child (>80) and mother and child (>60)"""
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    if fam.husb_id and fam.wife_id:
+                        if self.individuals[fam.husb_id].birthday != 'NA' and self.individuals[fam.wife_id].birthday != 'NA':
+                            if self.individuals[fam.husb_id].age - self.individuals[child].age > 80:
+                                print(
+                                    f"US12 - {self.individuals[fam.husb_id].name} is 80 years older than his child on line {self.individuals[fam.husb_id]._birthday_line}")
+                            if self.individuals[fam.wife_id].age - self.individuals[child].age > 60:
+                                print(
+                                    f'US12 - {self.individuals[fam.wife_id].name} is 60 years older than his child on line {self.individuals[fam.wife_id]._birthday_line}')
+       
     def user_story_15(self):
         for family in self.families.values():
             if len(family.children) >= 15:
@@ -645,7 +689,7 @@ class Individual:
         self._death_line = 0
 
         self.child = child          # set
-        self._child_lines = set()
+        self._child_lines = 0
 
         self.spouse = spouse        # set
         self._spouse_lines = set()
@@ -759,7 +803,7 @@ class Family:
         self._wife_name_line = 0
 
         self.children = children        # set
-        self._children_lines = set()
+        self._children_lines = 0
 
         self.death = death  # datetime object
         self._death_line = 0
