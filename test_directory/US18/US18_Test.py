@@ -16,7 +16,7 @@ class Test_US18(unittest.TestCase):
         sys.stdout = capturedOutput
         g.user_story_18()
         sys.stdout = sys.__stdout__
-        output_str1 = 'US18 - Martin /Johnson/ and Kristen /Johnson/ are married on line 50\n'
+        output_str1 = 'US18 - Martin /Johnson/ and Kristen /Johnson/ are siblings and are married on line 50\n'
         self.assertEqual(capturedOutput.getvalue(), output_str1)
 
 
