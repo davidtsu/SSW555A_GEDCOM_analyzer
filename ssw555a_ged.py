@@ -42,25 +42,30 @@ class GED_Repo:
     
     def check_data(self):
         ''' all user stories related to CHECKING data should probably go here '''
-        self.user_story_01()    # US01
-        self.user_story_2()     # US02 and US10
-        self.user_story_3()     # US03
-        self.user_story_4()     # US04
-        self.user_story_5()     # US05
-        self.user_story_6()     # US06
-        self.user_story_07()    # US07
-        self.check_bday()       # US08 and US09
-        self.user_story_15()    # US15
-        self.user_story_21()    # US21
+        # self.user_story_01()    # US01
+        # self.user_story_2()     # US02 and US10
+        # self.user_story_3()     # US03
+        # self.user_story_4()     # US04
+        # self.user_story_5()     # US05
+        # self.user_story_6()     # US06
+        # self.user_story_07()    # US07
+        # self.check_bday()       # US08 and US09
+        # self.user_story_15()    # US15
+        # self.user_story_21()    # US21
         self.user_story_11()
         self.user_story_12()
+        
+  
+
     def print_data(self):
         ''' all user stories related to PRINTING data should go here '''
-        self.US29_list_deceased()
-        self.user_story_35()
-        self.user_story_36()
-        self.US38_upcoming_birthdays()
-        self.US39_upcoming_anniversaries()
+        # self.US29_list_deceased()
+        # self.user_story_35()
+        # self.user_story_36()
+        # self.US38_upcoming_birthdays()
+        # self.US39_upcoming_anniversaries()
+        # self.user_story_33()
+        
 
     def read_ged(self, ip, sep=' '):
         """ For reading GEDCOM files """
@@ -271,21 +276,54 @@ class GED_Repo:
                             print(
                                 f'US10 - {self.individuals[family.husb_id].name} was less than 14 years old at time of marriage on line {self.individuals[family.husb_id]._birthday_line}')
 
-
-    # def user_story_12(self):
-    #     for family in self.families.values():
-    #         if self.individuals[family.husb_id].death - self.individuals[family.children].age > 80:
-    #             print("US12: Error")
-
-                        
-    def user_story_11(self):
-        for family1 in self.families.values():
-            for family2 in self.families.values():
-                if family1.fid != family2.fid:
-                    if family1.husb_id == family2.husb_id:
-                        if family1.divorced == 'NA' and family2.divorced == 'NA' or family1.married < family2.married < family1.divorced:
+    def user_story_12(self):   
+        """List all orphaned children (both parents dead and child < 18 years old) in a GEDCOM file"""
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    # child_age = self.individuals[child].age
+                    if fam.husb_id and fam.wife_id:
+                        if self.individuals[fam.husb_id].age - self.individuals[child].age > 80:
                             print(
-                                f'US11: married twice')
+                                f'US12 - {self.individuals[fam.husb_id].name} age 80 years older than his child on line {self.individuals[fam.husb_id]._birthday_line}')
+                        if self.individuals[fam.wife_id].age - self.individuals[child].age > 60:
+                            print(
+                                f'US12 - {self.individuals[fam.wife_id].name} age 60 years older than his child on line {self.individuals[fam.wife_id]._birthday_line}')
+
+
+    def user_story_11(self):
+        for fam in self.families.values():
+            for fam2 in self.families.values():
+                if fam.fid != fam2.fid:
+                    if fam.husb_id == fam2.husb_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' or fam.married < fam2.married < fam.divorced:
+                            print(
+                                f'US11 - {fam.husb_name} married twice')
+                    if fam.wife_id == fam2.wife_id:
+                        if fam.divorced == 'NA' and fam2.divorced == 'NA' or fam.married < fam2.married < fam.divorced:
+                            print(
+                                f'US11 - {fam.wife_name} married twice')
+    def user_story_33(self):   
+        """List all orphaned children (both parents dead and child < 18 years old) in a GEDCOM file"""
+        orphans = list()
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    # child_age = self.individuals[child].age
+                    if fam.husb_id and fam.wife_id:
+                        dad = self.individuals[fam.husb_id]
+                        mom = self.individuals[fam.wife_id]
+                        if self.individuals[fam.husb_id].death != 'NA' and self.individuals[fam.wife_id].death != 'NA' and self.individuals[child].age < 18:
+                        # if not mom.alive and not dad.alive and self.individuals[child].age < 18:
+                            orphans.append(self.individuals[child].name)
+        
+        if len(orphans) == 0:
+            print("No orphans.")
+            return("No orphans.")
+        else:
+            print(orphans)
+            return orphans
+     
 
     def user_story_3(self):
         """ checks if a person's birthday occurs before their death day """
@@ -371,18 +409,8 @@ class GED_Repo:
                     #else:
                     #    print(f'{self.individuals[child].name} does not have both a mother and a father, on line {self.individuals[child]._birthday_line}')
 
-    def user_story_33(self):
-        orphans = []
-        for fam in self.families.values():
-            for child in fam.children:
-                child_age = self.individuals[child].age
-                if fam.husb_id and fam.wife_id:
-                    dad = self.individuals[fam.husb_id]
-                    mom = self.individuals[fam.wife_id]
-                    if not mom.alive and not dad.alive and child_age < 18:
-                        orphans.append(self.individuals[child].name)
-        return orphans
 
+       
     def user_story_15(self):
         for family in self.families.values():
                 if len(family.children) >= 15:
