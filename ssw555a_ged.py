@@ -53,6 +53,7 @@ class GED_Repo:
         self.check_bday()       # US08 and US09
         self.user_story_13()    # US13
         self.user_story_15()    # US15
+        self.US16_male_last_names() # US16
         self.user_story_21()    # US21
         self.user_story_24()    # US24
 
@@ -372,6 +373,28 @@ class GED_Repo:
         for family in self.families.values():
             if len(family.children) >= 15:
                 print(f"US15 - {self.individuals[family.wife_id].name} and {self.individuals[family.husb_id].name} Family has {len(family.children)} children on line {self.individuals[sorted(family.children)[14]]._birthday_line}")
+    
+    def US16_male_last_names(self):
+        """ US16: Male last names
+        All male members of a family should have the same last name """
+
+        for family in self.families.values():
+            husband = family.husb_name
+            x = husband.find("/")
+            lastname = husband[x + 1:len(husband) - 1]
+            children = family.children
+            if "NA" in children: # no children
+                pass
+            else: # family has children
+                for child in children:
+                    for person in self.individuals.values():
+                        if person.iid == child:
+                            if person.gender == "M":
+                                y = person.name.find("/")
+                                child_lastname = person.name[y + 1:len(person.name) - 1]
+                                if child_lastname != lastname:
+                                    print(f"US16: Male child: {person.name} with ID: {person.iid} on GEDCOM line: {person._name_line} has a differet last name than the family last name: {lastname}.")
+                        break
     
     def user_story_21(self):   
         """US21: checks the correct gender of husband and wife"""   
