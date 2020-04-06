@@ -502,32 +502,20 @@ class GED_Repo:
 
     def user_story_17(self):
         """ Parents should not marry any of their children """
-        for family in self.families.values():
-            if family.married != 'NA' and family.wife_id != 'NA' and family.husb_id != 'NA' and family.children != 'NA':
-                if len(family.children) > 0:
-                    if self.individuals[family.husb_id] == self.individuals[family.husb_id] and self.individuals[family.children] == self.individuals[family.wife_id]:
-                        print(f"US17 - {self.individuals[family.children].name} and {self.individuals[family.husb_id].name} are married on line {family._married_line}")
-                    if self.individuals[family.wife_id] == self.individuals[family.wife_id] and self.individuals[family.children] == self.individuals[family.husb_id]:
-                        print(f"US17 - {self.individuals[family.children].name} and {self.individuals[family.wife_id].name} are married on line {family._married_line}")
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f1.husb_id == f2.husb_id and f1.children == f2.wife_id:
+                    print(f"US17 - {self.individuals[f1.children].name} and {self.individuals[f1.husb_id].name} are married on line {f1._married_line}")
+                if f1.wife_id == f2.wife_id and f1.children == f2.husb_id:
+                    print(f"US17 - {self.individuals[f1.children].name} and {self.individuals[f1.wife_id].name} are married on line {f1._married_line}")
+
+    def user_story_18(self):
+        """ Siblings should not marry each other """
+        for f1 in self.families.values():
+            for f2 in self.families.values():
+                if f2.husb_id in f1.children and f2.wife_id in f1.children:
+                    print(f"US18 - {self.individuals[f2.husb_id].name} and {self.individuals[f2.wife_id].name} are married on line {f2._married_line}")
     
-    # def user_story_18(self):
-    #     """ Siblings should not marry one another """
-    #     for family in self.families.values():
-    #         if family.husb_id != 'NA':
-    #             if len(family.husb_id.children) > 0:
-    #                 for child in family.husb_id.children:
-    #                     c = self.individuals(family.children)
-    #                     c.father = family.husb_id
-    #         if family.wife_id != 'NA':
-    #             if len(family.wife_id.children) > 0:
-    #                 for child in family.wife_id.children:
-    #                     c = self.individuals(family.children)
-    #                     c.mother = family.wife_id
-    #     for family in self.families.values():
-    #         if family.husb_id != 'NA' and family.wife_id != 'NA':
-    #             if family.husb_id.mother == family.wife_id.mother or family.husb_id.father == family.wife_id.father:
-    #                 print(f"US18 - {self.individuals[family.husb_id].name} and {self.individuals[family.wife_id].name} are married on line {family._married_line}")
-            
     def set_ages(self):
         """ sets ages of individuals in individual_table """
         for i in self.individuals.values():
