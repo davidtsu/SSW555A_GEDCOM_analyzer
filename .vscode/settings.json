@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "C:\\Program Files\\Python37\\python.exe",
+=======
+    "python.pythonPath": "C:\\Users\\David\\Anaconda3\\python.exe",
+>>>>>>> 9fdabab5bcdd3ff597c93fdf1864ff28e2bdda8a
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
 }
