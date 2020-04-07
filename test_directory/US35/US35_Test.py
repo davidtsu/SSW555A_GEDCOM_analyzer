@@ -6,6 +6,7 @@ US35: List all people in a GEDCOM file who were born in the last 30 days
 
 import unittest, os, io, sys
 from ssw555a_ged import GED_Repo, Individual, Family
+from datetime import datetime
 
 class Test_US35(unittest.TestCase):
     """ Tests that List all people in a GEDCOM file who were born in the last 30 days. """
@@ -16,12 +17,7 @@ class Test_US35(unittest.TestCase):
         # need following cases:
         # birthday within 30days 
         g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US35', 'US35_recent_births.ged')])
-        capturedOutput = io.StringIO()
-        sys.stdout = capturedOutput
-        g.user_story_35()
-        sys.stdout = sys.__stdout__
-        output_str1 = 'US35 - Emith /Ohou/ were born in the last 30 days on line 15\n'
-        self.assertEqual(capturedOutput.getvalue(), output_str1)
+        self.assertEqual(g.user_story_35()._rows, [['@I1-US35-A@', 'Emith /Ohou/', datetime(2020, 3, 10, 0, 0).strftime("%m/%d/%Y")]])
 
 if __name__ == "__main__":
     unittest.main(exit=False)
