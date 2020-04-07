@@ -1,0 +1,21 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE My Family
+1 DATE 4 APR 2020
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1-US31-A@
+2 NAME xiaojun zhu
+1 SUBN
+1 CHAR UTF-8
+0 @I1-US31-A@ INDI
+1 NAME Libo /Tim_us31/
+2 GIVN Libo
+2 SURN Tim_us31
+1 SEX F
+1 BIRT
+2 DATE 7 FEB 1994
+0 TRLR
