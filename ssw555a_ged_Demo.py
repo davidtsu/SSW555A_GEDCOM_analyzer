@@ -14,7 +14,7 @@ def main():
     # this will analyze all files in the input_files directory
     for folder in [x for x in os.listdir(os.path.join(os.getcwd(), 'test_directory')) if os.path.isdir(os.path.join(os.getcwd(), 'test_directory', x))]:
         try:
-            print(f'Reading files in {folder}')
+            # print(f'Reading files in {folder}')
             file_list = file_list + [os.path.join(os.getcwd(), 'test_directory', folder, f) for f in os.listdir(os.path.join(os.getcwd(), 'test_directory', folder)) if f.endswith('.ged')]
         except ValueError as v:
             print(v)
@@ -23,7 +23,7 @@ def main():
 
     try:
         print(f'Analyzing final cumulative file data.')
-        print(file_list)
+        # print(file_list)
         g = GED_Repo(file_list)
         g.check_data()
         g.print_data()

@@ -22,7 +22,7 @@ class GED_Repo:
             for in_file in in_folder:
                 if in_file.endswith('.ged'):
                     # read data
-                    print(f'Reading GED data from {in_file}')
+                    # print(f'Reading GED data from {in_file}')
                     self.read_ged(in_file)
 
                     # finish calculating data
