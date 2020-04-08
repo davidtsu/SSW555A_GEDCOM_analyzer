@@ -54,6 +54,7 @@ class GED_Repo:
         self.user_story_11()    # US11
         self.user_story_12()    # US12
         self.user_story_13()    # US13
+        self.user_story_14()    # US14
         self.user_story_15()    # US15
         self.US16_male_last_names() # US16
         self.user_story_17()    # US17
@@ -327,7 +328,21 @@ class GED_Repo:
                     if self.individuals[family.husb_id].death != 'NA':
                         if self.individuals[family.husb_id].death < family.divorced:
                                 print(f'US06 - {self.individuals[family.husb_id].name} divorce after individual death date on line {family._divorced_line}')
-
+    
+    def user_story_14(self):
+        """checks that no more than 5 multiple births happens at the same time in a family"""
+        for fam in self.families.values():
+            if fam.husb_id and fam.wife_id:
+                if fam.children != 'NA' and len(fam.children)>5:
+                    for child in fam.children:
+                        counter = 1
+                        child1_birthday = self.individuals[child].birthday
+                        for child2 in fam.children:
+                            if self.individuals[child2].birthday == child1_birthday:
+                                counter += 1
+                    if counter > 6:
+                        print(f'US14 - {fam.fid} has more than 5 multiple childrens born in the same time.')
+                    
     def user_story_07(self):
         """ checks that age of individuals is <150 """
         for ind in self.individuals.values():
