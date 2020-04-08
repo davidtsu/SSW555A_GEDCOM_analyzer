@@ -1,10 +1,7 @@
 """
 User Story 33 - Test File
-
 US33: List all orphans
-
 @Author: Ejona Kocibelli
-
 """
 
 import unittest, os, io, sys
@@ -13,10 +10,10 @@ from prettytable import PrettyTable
 
 
 class Test_US33(unittest.TestCase):
-    """ Tests US33. Ensures that List all orphans. """
+    """ Tests US33. Ensures that list all orphans. """
     
-    def test_US33_living_single(self):
-        """ Tests US31. Ensures that List living singles are printed to the user. """
+    def test_US33_orphans_list(self):
+        """ Tests US33. Ensures that list all orphans. """
         # I tested my US11 Test File as I know there are no orphans.
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US11", "US11_no_bigamy.ged")])
         self.assertEqual(g.user_story_33(), 'No orphans.')
