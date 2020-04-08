@@ -637,6 +637,7 @@ class GED_Repo:
             pt.sortby = 'ID'
             print(pt)
             return pt
+        
 
     def user_story_35(self):
         ''' US35 - prints list of individuals born in the last 30 days '''
