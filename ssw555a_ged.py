@@ -67,6 +67,7 @@ class GED_Repo:
         self.US29_list_deceased()
         self.US30_living_married()
         self.US31_living_single()
+        self.user_story_33()
         self.user_story_35()
         self.user_story_36()
         self.US38_upcoming_birthdays()
@@ -603,6 +604,31 @@ class GED_Repo:
             pt.sortby = 'Unmarried Individual ID'
             print(pt)
             return pt
+
+    def user_story_33_find_orphans(self):
+        """List all orphaned children (both parents dead and child < 18 years old) in a GEDCOM file"""
+        orphans = list()
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    if fam.husb_id and fam.wife_id:
+                        if self.individuals[fam.husb_id].death != 'NA' and self.individuals[fam.wife_id].death != 'NA' and \
+                                self.individuals[child].age != 'NA' and self.individuals[child].age < 18:
+                            orphans.append(self.individuals[child].iid)
+
+        return orphans
+
+
+    def user_story_33(self):
+        """ prints list of individuals using prettytable """
+        print("US33: List of Orphans")
+        orphans = self.user_story_33_find_orphans()
+        pt = PrettyTable()
+        pt.field_names = ['ID', 'Name', 'Age']
+        for i in orphans:
+            indi = self.individuals[i]
+            pt.add_row([indi.iid, indi.name, indi.age])
+        print(pt)
 
     def user_story_35(self):
         ''' US35 - prints list of individuals born in the last 30 days '''
