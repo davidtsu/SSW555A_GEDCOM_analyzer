@@ -71,10 +71,12 @@ class GED_Repo:
         self.US29_list_deceased()
         self.US30_living_married()
         self.US31_living_single()
+        self.user_story_32()
         self.user_story_33()
         self.US34_Twice_age_diff()
         self.user_story_35()
         self.user_story_36()
+        self.user_story_37()
         self.US38_upcoming_birthdays()
         self.US39_upcoming_anniversaries()
 
@@ -638,7 +640,7 @@ class GED_Repo:
         """  US28: List siblings by age
         List siblings in families by decreasing age, i.e. oldest siblings first"""
         pt = PrettyTable()
-        pt.field_names = ['Family ID', 'Silibings in family(sort)']
+        pt.field_names = ['Family ID', 'Siblings in family(sort)']
 
         for i in self.families.values():
             if i.children !="NA":
@@ -709,6 +711,32 @@ class GED_Repo:
             return 'No unmarried individuals over 30.'
         else:
             pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
+    
+    def user_story_32(self):
+        ''' lists all instances of multiple births (twins, triplets, etc). '''
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Individual ID', 'Individual Name', 'Individual Birthday']
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                bday_dict = dict()
+                for child in fam.children:
+                    if self.individuals[child].birthday.strftime("%m/%d/%Y") in bday_dict.keys():
+                        bday_dict[self.individuals[child].birthday.strftime("%m/%d/%Y")].append(child)
+                    else:
+                        bday_dict[self.individuals[child].birthday.strftime("%m/%d/%Y")] = [child]
+                for children in bday_dict.values():
+                    if len(children) > 1:
+                        for child in children:
+                            pt.add_row([fam.fid, child, self.individuals[child].name, self.individuals[child].birthday.strftime("%m/%d/%Y")])
+
+        print('US32: List all instances of multiple births')
+        if len(pt._rows) == 0:
+            print('No instances of multiple births.')
+            return 'No instances of multiple births.'
+        else:
+            pt.sortby = 'Family ID'
             print(pt)
             return pt
     
@@ -788,11 +816,80 @@ class GED_Repo:
 
     def user_story_36(self):
         ''' US36 - prints list of individuals who died in the last 30 days '''
+        pt = PrettyTable()
+        pt.field_names = ['Individual ID', 'Individual Name', 'Individual Death Date']
         td=datetime.today()
         for individual in self.individuals.values():
             if individual.death != 'NA':
                 if (individual.death + relativedelta(days=30) ) > td:
-                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
+                    pt.add_row([individual.iid, individual.name, individual.death.strftime("%m/%d/%Y")])
+        if not len(pt._rows) == 0:
+            print('US36: List all individuals that have died in the last 30 days.')
+            print(pt)
+            return pt
+        else:
+            print('No individuals have died in the past 30 days.')
+            return 'No individuals have died in the past 30 days.'
+    
+    def us37_recursive_search(self, id):
+        ''' recursively searches for blood relatives of id '''
+        living_list = []
+        husb_ids = [i.husb_id for i in self.families.values()]
+        wife_ids = [i.wife_id for i in self.families.values()]
+        if id not in husb_ids and id not in wife_ids:
+            living_list.append([list(self.individuals[id].child)[0], id, self.individuals[id].name])
+        else:
+            for family in self.families.values():
+                if id == family.husb_id or id == family.wife_id:
+                    if self.individuals[id].alive:
+                        living_list.append([family.fid, id, self.individuals[id].name]) # will result in duplicate entries if an individual is in multiple families
+                    # check for grandchildren
+                    if family.children != '' and family.children != 'NA':
+                        for child in family.children:
+                            living_list.extend(self.us37_recursive_search(child))
+        return living_list
+
+    def user_story_37(self):
+        ''' US37 - prints list of all living spouses and descendants of people in a GEDCOM file who died in the last 30 days '''
+        dead = list()
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Individual ID', 'Individual Name']
+        td=datetime.today()
+
+        # gets list of dead individuals
+        for individual in self.individuals.values():
+            if individual.death != 'NA':
+                if (individual.death + relativedelta(days=30) ) > td:
+                    dead.append(individual.iid)
+        
+        # checks list of dead individuals for living family
+        for dead_person_id in dead:
+            living_relatives = []
+            for family in self.families.values():
+                # if dead individual is male, check for living (ex-)wife/wives
+                if dead_person_id == family.husb_id:
+                    if family.wife_id and self.individuals[family.wife_id].alive:
+                        pt.add_row([family.fid, family.wife_id, self.individuals[family.wife_id].name])
+                # if dead individual is female, check for living (ex-)husband(s)
+                if dead_person_id == family.wife_id:
+                    if family.husb_id and self.individuals[family.husb_id].alive:
+                        pt.add_row([family.fid, family.husb_id, self.individuals[family.husb_id].name])
+                # check if dead individual has children, and if so, add blood children and possibly grandchildren
+                if (dead_person_id == family.husb_id or dead_person_id == family.wife_id) and family.children != '' and family.children != 'NA':
+                    for child in family.children:
+                        living_relatives.extend(self.us37_recursive_search(child))
+            if len(living_relatives) > 0:
+                for rel in living_relatives:
+                    pt.add_row([rel[0], rel[1], rel[2]])
+        print('US37: List all living spouses and descendants of people in a GEDCOM file who died in the last 30 days.')
+        if not len(pt._rows) == 0:
+            pt.sortby = 'Family ID'
+            print(pt)
+            return pt
+        else:
+            print('No individuals have died in the past 30 days.')
+            return 'No individuals have died in the past 30 days.'
+            
     
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays
@@ -820,7 +917,10 @@ class GED_Repo:
         pt.field_names = ["Name", "Birthday"]
         for i in upcoming_bdays:
             pt.add_row([i[0], i[1]])
-        print(pt)
+        if not len(pt._rows) == 0:
+            print(pt)
+        else:
+            print('No upcoming birthdays.')
         return(upcoming_bdays)
 
     def US39_upcoming_anniversaries(self):
@@ -861,7 +961,10 @@ class GED_Repo:
         pt.field_names = ["Anniversary", "Husband", "Wife"]
         for i in upcoming_anniversaries:
             pt.add_row([i[0], i[1], i[2]])
-        print(pt)
+        if not len(pt._rows) == 0:
+            print(pt)
+        else:
+            print('No upcoming anniversaries.')
         return(upcoming_anniversaries)
 
     def set_ages(self):
