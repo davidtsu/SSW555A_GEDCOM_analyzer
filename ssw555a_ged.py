@@ -816,11 +816,24 @@ class GED_Repo:
 
     def user_story_36(self):
         ''' US36 - prints list of individuals who died in the last 30 days '''
+        pt = PrettyTable()
+        pt.field_names = ['Individual ID', 'Individual Name', 'Individual Death Date']
         td=datetime.today()
         for individual in self.individuals.values():
             if individual.death != 'NA':
                 if (individual.death + relativedelta(days=30) ) > td:
-                    print(f'US36 - {individual.name} were died in the last 30 days on line {individual._name_line}')
+                    pt.add_row([individual.iid, individual.name, individual.death.strftime("%m/%d/%Y")])
+        if not len(pt._rows) == 0:
+            print('US36: List all individuals that have died in the last 30 days.')
+            print(pt)
+            return pt
+        else:
+            print('No individuals have died in the past 30 days.')
+            return 'No individuals have died in the past 30 days.'
+    
+    def user_story_37(self):
+        ''' US37 - prints list of all living spouses and descendants of people in a GEDCOM file who died in the last 30 days '''
+        pass
     
     def US38_upcoming_birthdays(self):
         """ US38: List upcoming birthdays
@@ -848,7 +861,10 @@ class GED_Repo:
         pt.field_names = ["Name", "Birthday"]
         for i in upcoming_bdays:
             pt.add_row([i[0], i[1]])
-        print(pt)
+        if not len(pt._rows) == 0:
+            print(pt)
+        else:
+            print('No upcoming birthdays.')
         return(upcoming_bdays)
 
     def US39_upcoming_anniversaries(self):
@@ -889,7 +905,10 @@ class GED_Repo:
         pt.field_names = ["Anniversary", "Husband", "Wife"]
         for i in upcoming_anniversaries:
             pt.add_row([i[0], i[1], i[2]])
-        print(pt)
+        if not len(pt._rows) == 0:
+            print(pt)
+        else:
+            print('No upcoming anniversaries.')
         return(upcoming_anniversaries)
 
     def set_ages(self):
