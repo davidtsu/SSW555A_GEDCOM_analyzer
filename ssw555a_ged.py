@@ -70,7 +70,6 @@ class GED_Repo:
         self.US29_list_deceased()
         self.US30_living_married()
         self.US31_living_single()
-        self.user_story_33()
         self.US34_Twice_age_diff()
         self.user_story_35()
         self.user_story_36()
