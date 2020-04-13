@@ -619,6 +619,30 @@ class GED_Repo:
                                     print(f"US25: Child: {person.name} on GEDCOM line: {person._name_line} has the same first name as another family member.")
                             break
 
+    def US28_Siblings_by_age(self):
+        """  US28: List siblings by age
+        List siblings in families by decreasing age, i.e. oldest siblings first"""
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Silibings in family(sort)']
+
+        for i in self.families.values():
+            if i.children !="NA":
+                siblings={}#{child_name_1:(age1,birthday1),child_name_2:(age2,birthday2)}
+                for child_id in itertools.chain(i.children):
+                    child_name=self.individuals[child_id].name
+                    siblings[child_name] = (self.individuals[child_id].age,self.individuals[child_id].birthday)
+                siblings_sort = {k:datetime.strftime(v[1], "%d %b %Y") for (k,v) in sorted(siblings.items(),key=lambda item:item[1][1],reverse=False)}
+                pt.add_row([i.fid, siblings_sort])
+    
+        print("US28: List all siblings by age,i.e. oldest siblings first")
+        if len(pt._rows) == 0:
+            print('Family in ged.file doesn\'t have children yet.')
+            return 'Family in ged.file doesn\'t have children yet.'
+        else:
+            pt.sortby = 'Family ID'
+            print(pt)
+            return pt
+
     def US29_list_deceased(self):
         """ US29: List deceased
         List all deceased individuals in a GEDCOM file """
@@ -670,6 +694,32 @@ class GED_Repo:
             return 'No unmarried individuals over 30.'
         else:
             pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
+
+    def US34_Twice_age_diff(self):
+        """  US34: List large age differences
+        List all couples who were married when the older spouse was more than twice as old as the younger spouse"""
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Twice age diff married spouse']
+
+        for i in self.families.values():
+            if i.married !="NA" and self.individuals[i.husb_id].birthday!="NA"\
+                and self.individuals[i.wife_id].birthday!="NA":
+                Hus_bd=self.individuals[i.husb_id].birthday
+                Hus_marr_age=math.floor((i.married - Hus_bd).days / 365.2425) 
+                Wf_bd=self.individuals[i.wife_id].birthday
+                Wf_marr_age=math.floor((i.married -Wf_bd).days / 365.2425)
+                if max(Hus_marr_age,Wf_marr_age)>min(Hus_marr_age,Wf_marr_age)*2\
+                    and min(Hus_marr_age,Wf_marr_age)>0:
+                    pt.add_row([i.fid,(i.husb_name,i.wife_name)])
+    
+        print("US34: List large age differences")
+        if len(pt._rows) == 0:
+            print('Couple in ged.file doesn\'t have 2 times age difference when married.')
+            return 'Couple in ged.file doesn\'t have 2 times age difference when married.'
+        else:
+            pt.sortby = 'Family ID'
             print(pt)
             return pt
 
@@ -765,57 +815,6 @@ class GED_Repo:
             pt.add_row([i[0], i[1], i[2]])
         print(pt)
         return(upcoming_anniversaries)
-    
-    def US28_Siblings_by_age(self):
-        """  US28: List siblings by age
-        List siblings in families by decreasing age, i.e. oldest siblings first"""
-        pt = PrettyTable()
-        pt.field_names = ['Family ID', 'Silibings in family(sort)']
-
-        for i in self.families.values():
-            if i.children !="NA":
-                siblings={}#{child_name_1:(age1,birthday1),child_name_2:(age2,birthday2)}
-                for child_id in itertools.chain(i.children):
-                    child_name=self.individuals[child_id].name
-                    siblings[child_name] = (self.individuals[child_id].age,self.individuals[child_id].birthday)
-                siblings_sort = {k:datetime.strftime(v[1], "%d %b %Y") for (k,v) in sorted(siblings.items(),key=lambda item:item[1][1],reverse=False)}
-                pt.add_row([i.fid, siblings_sort])
-    
-        print("US28: List all siblings by age,i.e. oldest siblings first")
-        if len(pt._rows) == 0:
-            print('Family in ged.file doesn\'t have children yet.')
-            return 'Family in ged.file doesn\'t have children yet.'
-        else:
-            pt.sortby = 'Family ID'
-            print(pt)
-            return pt
-
-    def US34_Twice_age_diff(self):
-        """  US34: List large age differences
-        List all couples who were married when the older spouse was more than twice as old as the younger spouse"""
-        pt = PrettyTable()
-        pt.field_names = ['Family ID', 'Twice age diff married spouse']
-
-        for i in self.families.values():
-            if i.married !="NA" and self.individuals[i.husb_id].birthday!="NA"\
-                and self.individuals[i.wife_id].birthday!="NA":
-                Hus_bd=self.individuals[i.husb_id].birthday
-                Hus_marr_age=math.floor((i.married - Hus_bd).days / 365.2425) 
-                Wf_bd=self.individuals[i.wife_id].birthday
-                Wf_marr_age=math.floor((i.married -Wf_bd).days / 365.2425)
-                if max(Hus_marr_age,Wf_marr_age)>min(Hus_marr_age,Wf_marr_age)*2\
-                    and min(Hus_marr_age,Wf_marr_age)>0:
-                    pt.add_row([i.fid,(i.husb_name,i.wife_name)])
-    
-        print("US34: List large age differences")
-        if len(pt._rows) == 0:
-            print('Couple in ged.file doesn\'t have 2 times age difference when married.')
-            return 'Couple in ged.file doesn\'t have 2 times age difference when married.'
-        else:
-            pt.sortby = 'Family ID'
-            print(pt)
-            return pt
-
 
     def set_ages(self):
         """ sets ages of individuals in individual_table """
