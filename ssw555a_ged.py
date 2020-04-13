@@ -71,10 +71,12 @@ class GED_Repo:
         self.US29_list_deceased()
         self.US30_living_married()
         self.US31_living_single()
+        self.user_story_32()
         self.user_story_33()
         self.US34_Twice_age_diff()
         self.user_story_35()
         self.user_story_36()
+        #self.user_story_37()
         self.US38_upcoming_birthdays()
         self.US39_upcoming_anniversaries()
 
@@ -638,7 +640,7 @@ class GED_Repo:
         """  US28: List siblings by age
         List siblings in families by decreasing age, i.e. oldest siblings first"""
         pt = PrettyTable()
-        pt.field_names = ['Family ID', 'Silibings in family(sort)']
+        pt.field_names = ['Family ID', 'Siblings in family(sort)']
 
         for i in self.families.values():
             if i.children !="NA":
@@ -709,6 +711,32 @@ class GED_Repo:
             return 'No unmarried individuals over 30.'
         else:
             pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
+    
+    def user_story_32(self):
+        ''' lists all instances of multiple births (twins, triplets, etc). '''
+        pt = PrettyTable()
+        pt.field_names = ['Family ID', 'Individual ID', 'Individual Name', 'Individual Birthday']
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                bday_dict = dict()
+                for child in fam.children:
+                    if self.individuals[child].birthday.strftime("%m/%d/%Y") in bday_dict.keys():
+                        bday_dict[self.individuals[child].birthday.strftime("%m/%d/%Y")].append(child)
+                    else:
+                        bday_dict[self.individuals[child].birthday.strftime("%m/%d/%Y")] = [child]
+                for children in bday_dict.values():
+                    if len(children) > 1:
+                        for child in children:
+                            pt.add_row([fam.fid, child, self.individuals[child].name, self.individuals[child].birthday.strftime("%m/%d/%Y")])
+
+        print('US32: List all instances of multiple births')
+        if len(pt._rows) == 0:
+            print('No instances of multiple births.')
+            return 'No instances of multiple births.'
+        else:
+            pt.sortby = 'Family ID'
             print(pt)
             return pt
     
