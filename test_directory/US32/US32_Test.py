@@ -18,7 +18,7 @@ from prettytable import PrettyTable
 class Test_US32(unittest.TestCase):
     """ Tests US32. Ensures that a list of multiple births is printed. """
     
-    def test_US32_living_single(self):
+    def test_US32_multiple_births(self):
         """ Tests US32. Ensures that a list of multiple births is printed. """
         # no multiple births
         g = GED_Repo([os.path.join(os.getcwd(), "test_directory", "US32", "US32_none.ged")])
