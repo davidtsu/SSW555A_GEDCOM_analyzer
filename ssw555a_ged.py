@@ -54,6 +54,7 @@ class GED_Repo:
         self.user_story_11()    # US11
         self.user_story_12()    # US12
         self.user_story_13()    # US13
+        self.user_story_14()    # US14
         self.user_story_15()    # US15
         self.US16_male_last_names() # US16
         self.user_story_17()    # US17
@@ -70,6 +71,7 @@ class GED_Repo:
         self.US29_list_deceased()
         self.US30_living_married()
         self.US31_living_single()
+        self.user_story_33()
         self.US34_Twice_age_diff()
         self.user_story_35()
         self.user_story_36()
@@ -418,7 +420,21 @@ class GED_Repo:
                             if self.individuals[fam.wife_id].age - self.individuals[child].age > 60:
                                 print(
                                     f'US12 - {self.individuals[fam.wife_id].name} is 60 years older than his child on line {self.individuals[fam.wife_id]._birthday_line}')
-       
+    
+    def user_story_14(self):
+        """checks that no more than 5 multiple births happens at the same time in a family"""
+        for fam in self.families.values():
+            if fam.husb_id and fam.wife_id:
+                if fam.children != 'NA' and len(fam.children)>5:
+                    for child in fam.children:
+                        counter = 1
+                        child1_birthday = self.individuals[child].birthday
+                        for child2 in fam.children:
+                            if self.individuals[child2].birthday == child1_birthday:
+                                counter += 1
+                    if counter > 6:
+                        print(f'US14 - {fam.fid} has more than 5 multiple childrens born in the same time.')
+
     def user_story_15(self):
         for family in self.families.values():
             if len(family.children) >= 15:
@@ -693,6 +709,39 @@ class GED_Repo:
             return 'No unmarried individuals over 30.'
         else:
             pt.sortby = 'Unmarried Individual ID'
+            print(pt)
+            return pt
+    
+    def user_story_33_find_orphans(self):
+        """List all orphaned children (both parents dead and child < 18 years old) in a GEDCOM file"""
+        orphans = list()
+        for fam in self.families.values():
+            if fam.children != 'NA':
+                for child in fam.children:
+                    if fam.husb_id and fam.wife_id:
+                        if self.individuals[fam.husb_id].death != 'NA' and self.individuals[fam.wife_id].death != 'NA' and \
+                                self.individuals[child].age != 'NA' and self.individuals[child].age < 18:
+                            orphans.append(self.individuals[child].iid)
+
+        return orphans
+
+
+    def user_story_33(self):
+        """ prints list of individuals using prettytable """
+        # print("US33: List of Orphans")
+        orphans = self.user_story_33_find_orphans()
+        pt = PrettyTable()
+        pt.field_names = ['ID', 'Name', 'Age']
+        for i in orphans:
+            indi = self.individuals[i]
+            pt.add_row([indi.iid, indi.name, indi.age])
+        
+        print("US33: List of Orphans")
+        if len(pt._rows) == 0:
+            print('No orphans.')
+            return 'No orphans.'
+        else:
+            pt.sortby = 'ID'
             print(pt)
             return pt
 

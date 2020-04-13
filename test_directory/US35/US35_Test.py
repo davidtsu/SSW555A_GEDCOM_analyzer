@@ -17,7 +17,7 @@ class Test_US35(unittest.TestCase):
         # need following cases:
         # birthday within 30days 
         g = GED_Repo([os.path.join(os.getcwd(), 'test_directory', 'US35', 'US35_recent_births.ged')])
-        self.assertEqual(g.user_story_35()._rows, [['@I1-US35-A@', 'Emith /Ohou/', datetime(2020, 3, 10, 0, 0).strftime("%m/%d/%Y")]])
+        self.assertEqual(g.user_story_35()._rows, [['@I1-US35-A@', 'Emith /Ohou/', datetime(2020, 3, 30, 0, 0).strftime("%m/%d/%Y")]])
 
 if __name__ == "__main__":
     unittest.main(exit=False)
